@@ -5,6 +5,14 @@
   <title>Administradores</title>
 </head>
 <body>
+<div style="text-align: right; margin-bottom: 20px; padding: 10px; background-color: #f0f0f0;">
+        <span th:if="${usuario != null}">
+            Bienvenido: <strong th:text="${usuario.correo}"></strong>
+            (Administrador)
+        </span>
+  <a href="/presentation/login/logout" style="margin-left: 20px; color: #0066cc;">Cerrar Sesión</a>
+</div>
+
 <h1>Administradores</h1>
 <table border="1">
   <thead>

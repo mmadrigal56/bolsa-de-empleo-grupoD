@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OferenteRepository extends CrudRepository<Oferente, Integer> {
-
+    Oferente findOferenteByCorreoAndClave(String correo, String clave);
 }

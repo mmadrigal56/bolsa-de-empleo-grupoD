@@ -55,5 +55,18 @@ public class Service {
         return puestoRepository.findAll();
     }
 
+    public Object findUserByEmailAndPassword(String correo, String clave) {
+        Administrador admin = administradorRepository.findAdministradorByCorreoAndClave(correo, clave);
+        if (admin != null) return admin;
+
+        Empresa empresa = empresaRepository.findEmpresaByCorreoAndClave(correo, clave);
+        if (empresa != null) return empresa;
+
+        Oferente oferente = ofrerenteRepository.findOferenteByCorreoAndClave(correo, clave);
+        if (oferente != null) return oferente;
+
+        return null;  
+    }
+
 }
 
