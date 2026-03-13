@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Empresas</title>
+</head>
+<body>
+<h1>Empresas</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Localización</th>
+        <th>Correo</th>
+        <th>Teléfono</th>
+        <th>Descripción</th>
+        <th>Autorizada</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="e : ${empresas}">
+        <td th:text="${e.id}"></td>
+        <td th:text="${e.nombre}"></td>
+        <td th:text="${e.localizacion}"></td>
+        <td th:text="${e.correo}"></td>
+        <td th:text="${e.telefono}"></td>
+        <td th:text="${e.descripcion}"></td>
+        <td th:text="${e.autorizada ? 'Sí' : 'No'}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

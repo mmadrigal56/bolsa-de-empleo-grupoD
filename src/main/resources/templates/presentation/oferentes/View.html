@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Oferentes</title>
+</head>
+<body>
+<h1>Oferentes</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Identificación</th>
+        <th>Nombre</th>
+        <th>Primer Apellido</th>
+        <th>Nacionalidad</th>
+        <th>Teléfono</th>
+        <th>Correo</th>
+        <th>Residencia</th>
+        <th>Autorizado</th>
+        <th>Currículum</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="o : ${oferentes}">
+        <td th:text="${o.id}"></td>
+        <td th:text="${o.identificacion}"></td>
+        <td th:text="${o.nombre}"></td>
+        <td th:text="${o.primerApellido}"></td>
+        <td th:text="${o.nacionalidad}"></td>
+        <td th:text="${o.telefono}"></td>
+        <td th:text="${o.correo}"></td>
+        <td th:text="${o.lugarResidencia}"></td>
+        <td th:text="${o.autorizado ? 'Sí' : 'No'}"></td>
+        <td th:text="${o.rutaCurriculum != null ? o.rutaCurriculum : 'Sin CV'}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

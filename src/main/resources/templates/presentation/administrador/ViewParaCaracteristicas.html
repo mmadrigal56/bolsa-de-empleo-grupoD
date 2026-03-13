@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Características</title>
+</head>
+<body>
+<h1>Características</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Padre</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${caracteristicas}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.nombre}"></td>
+        <td th:text="${c.padre != null ? c.padre.nombre : 'Raíz'}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

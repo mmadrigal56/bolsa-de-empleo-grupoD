@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Administradores</title>
+</head>
+<body>
+<h1>Administradores</h1>
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Correo</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="a : ${administrador}">
+    <td th:text="${a.id}"></td>
+    <td th:text="${a.correo}"></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

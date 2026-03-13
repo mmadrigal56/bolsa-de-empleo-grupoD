@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Habilidades del Oferente</title>
+</head>
+<body>
+<h1>Habilidades por Oferente</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Oferente</th>
+        <th>Característica</th>
+        <th>Nivel Obtenido</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="h : ${oferenteHabilidad}">
+        <td th:text="${h.id}"></td>
+        <td th:text="${h.oferente.nombre + ' ' + h.oferente.primerApellido}"></td>
+        <td th:text="${h.caracteristica.nombre}"></td>
+        <td th:text="${h.nivel}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
