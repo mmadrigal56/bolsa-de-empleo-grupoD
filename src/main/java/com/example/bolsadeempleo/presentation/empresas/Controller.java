@@ -1,18 +1,22 @@
 package com.example.bolsadeempleo.presentation.empresas;
 
-import com.example.bolsadeempleo.logic.Empresa;
-import com.example.bolsadeempleo.logic.Service;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.bolsadeempleo.logic.empresa.Empresa;
+import com.example.bolsadeempleo.logic.empresa.ServiceE;
+import com.example.bolsadeempleo.logic.puesto.ServiceP;
+import com.example.bolsadeempleo.logic.puestoCaracteristica.ServicePC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import jakarta.servlet.http.HttpSession;
 
 @org.springframework.stereotype.Controller("empresas")
 public class Controller {
     @Autowired
-    private Service service;
+    private ServiceE service;
+
+    private ServiceP serviceP;
+
+    private ServicePC servicePC;
 
     @GetMapping("/presentation/empresas/show")
     public String show(Model model, HttpSession session)
@@ -37,7 +41,7 @@ public class Controller {
             return "redirect:/";
         }
 
-        model.addAttribute("puestos",service.puestosFindAll());
+        model.addAttribute("puestos",serviceP.puestosFindAll());
         model.addAttribute("usuario", usuario);
 
         return "/presentation/empresas/viewPuestos";
@@ -51,7 +55,7 @@ public class Controller {
             return "redirect:/";
         }
 
-        model.addAttribute("puestoCaracteristica",service.puestoCaracteristicaFindAll());
+        model.addAttribute("puestoCaracteristica",servicePC.puestoCaracteristicaFindAll());
         model.addAttribute("usuario", usuario);
 
         return "/presentation/empresas/ViewPuestoCaracteristica";

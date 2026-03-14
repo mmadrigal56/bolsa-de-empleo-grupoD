@@ -1,19 +1,19 @@
 package com.example.bolsadeempleo.presentation.administrador;
 
-import com.example.bolsadeempleo.logic.Service;
-import com.example.bolsadeempleo.logic.Administrador;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.bolsadeempleo.logic.administrador.ServiceA;
+import com.example.bolsadeempleo.logic.administrador.Administrador;
+import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import jakarta.servlet.http.HttpSession;
 
 @org.springframework.stereotype.Controller("administrador")
 public class Controller {
     //El admin controla el flujo de las operaciones de características.
     @Autowired
-    private Service service;
+    private ServiceA service;
+    private ServiceC serviceC;
 
     @GetMapping("/presentation/administrador/show")
     public String show(Model model, HttpSession session) {
@@ -39,7 +39,7 @@ public class Controller {
             return "redirect:/";
         }
 
-        model.addAttribute("caracteristicas", service.caracteristicaFindAll());
+        model.addAttribute("caracteristicas", serviceC.caracteristicaFindAll());
         model.addAttribute("usuario", usuario);
         return "/presentation/administrador/ViewParaCaracteristicas";
     }

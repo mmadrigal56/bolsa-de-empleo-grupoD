@@ -1,5 +1,6 @@
-package com.example.bolsadeempleo.logic;
+package com.example.bolsadeempleo.logic.oferente;
 
+import com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
