@@ -315,9 +315,8 @@
     <div class="nav-buttons">
         <!-- Si NO hay usuario logueado, mostrar botón de iniciar sesión -->
         <div th:if="${session.usuario == null}">
-            <a href="/presentation/login" class="btn btn-primary">Iniciar Sesión</a>
-            <a href="/presentation/login" class="btn btn-primary">Login:D</a>
-
+        <a href="/presentation/login" class="btn btn-outline">Iniciar Sesión</a>
+        <a href="/registro" class="btn btn-primary">Registrarse</a>
         </div>
 
         <!-- Si HAY usuario logueado, mostrar su info -->
