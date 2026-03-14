@@ -1,4 +1,4 @@
-package com.example.bolsadeempleo.logic;
+package com.example.bolsadeempleo.logic.administrador;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

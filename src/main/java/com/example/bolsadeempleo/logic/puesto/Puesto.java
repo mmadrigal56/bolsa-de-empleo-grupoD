@@ -1,5 +1,7 @@
-package com.example.bolsadeempleo.logic;
+package com.example.bolsadeempleo.logic.puesto;
 
+import com.example.bolsadeempleo.logic.puestoCaracteristica.PuestoCaracteristica;
+import com.example.bolsadeempleo.logic.empresa.Empresa;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

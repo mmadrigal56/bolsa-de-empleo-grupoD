@@ -1,9 +1,11 @@
 package com.example.bolsadeempleo.presentation.login;
 
-import com.example.bolsadeempleo.logic.Service;
-import com.example.bolsadeempleo.logic.Administrador;
-import com.example.bolsadeempleo.logic.Empresa;
-import com.example.bolsadeempleo.logic.Oferente;
+import com.example.bolsadeempleo.logic.administrador.ServiceA;
+import com.example.bolsadeempleo.logic.administrador.Administrador;
+import com.example.bolsadeempleo.logic.empresa.Empresa;
+import com.example.bolsadeempleo.logic.empresa.ServiceE;
+import com.example.bolsadeempleo.logic.oferente.Oferente;
+import com.example.bolsadeempleo.logic.oferente.ServiceO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +19,7 @@ import jakarta.servlet.http.HttpSession;
 @SessionAttributes("usuario")
 public class Controller {
     @Autowired
-    private Service service;
+    private ServiceA serviceA;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -36,7 +38,7 @@ public class Controller {
                              Model model)
     {
 
-        Object usuario = service.findUserByEmailAndPassword(correo, clave);
+        Object usuario = serviceA.findUserByEmailAndPassword(correo, clave);
         System.out.println("Usuario encontrado: " + (usuario != null ? usuario.getClass().getSimpleName() : "NULL"));
 
         if (usuario == null) {

@@ -1,6 +1,6 @@
 package com.example.bolsadeempleo.data;
 
-import com.example.bolsadeempleo.logic.Empresa;
+import com.example.bolsadeempleo.logic.empresa.Empresa;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

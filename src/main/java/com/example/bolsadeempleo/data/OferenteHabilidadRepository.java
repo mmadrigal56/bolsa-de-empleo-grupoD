@@ -1,6 +1,6 @@
 package com.example.bolsadeempleo.data;
 
-import com.example.bolsadeempleo.logic.OferenteHabilidad;
+import com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
