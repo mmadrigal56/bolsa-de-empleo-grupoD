@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdministradorRepository extends CrudRepository<Administrador,Integer> {
     Administrador findAdministradorByCorreoAndClave(String correo, String clave);
+    Administrador findByCorreo(String correo);
 }

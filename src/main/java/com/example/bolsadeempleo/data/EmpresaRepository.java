@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface EmpresaRepository extends CrudRepository<Empresa, Integer> {
 
     Empresa findEmpresaByCorreoAndClave(String correo, String clave);
+    Empresa findByCorreo(String correo);
 }
