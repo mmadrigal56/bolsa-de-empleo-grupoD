@@ -124,7 +124,7 @@ public class Controller {
             @RequestParam String correo,
             @RequestParam String clave,
             @RequestParam String lugarResidencia,
-            @RequestParam String rutaCurriculum) {
+            @RequestParam(required = false) String rutaCurriculum) {
 
         Oferente oferente = new Oferente();
         oferente.setIdentificacion(identificacion);

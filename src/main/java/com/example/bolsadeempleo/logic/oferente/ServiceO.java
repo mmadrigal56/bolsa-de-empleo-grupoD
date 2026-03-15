@@ -20,4 +20,8 @@ public class ServiceO {
         oferente.setClave(passwordEncoder.encode(oferente.getClave()));
         oferenteRepository.save(oferente);
     }
+
+    public void actualizarOferente(Oferente oferente) {
+        oferenteRepository.save(oferente);
+    }
 }
