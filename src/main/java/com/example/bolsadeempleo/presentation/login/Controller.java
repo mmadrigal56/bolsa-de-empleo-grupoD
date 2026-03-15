@@ -114,6 +114,12 @@ public class Controller {
         return "presentation/oferentes/ViewRegistro";
     }
 
+    @GetMapping("/registro/administrador")
+    public String formAdministrador() {
+        return "presentation/administrador/ViewRegistro";
+    }
+
+
     @PostMapping("/registro/oferente")
     public String registrarOferente(
             @RequestParam String identificacion,
@@ -141,4 +147,18 @@ public class Controller {
         serviceO.registrarOferente(oferente);
         return "redirect:/presentation/login";
     }
+
+    @PostMapping("/registro/administrador")
+    public String registrarAdministrador(
+            @RequestParam String correo,
+            @RequestParam String clave) {
+
+        Administrador administrador = new Administrador();
+        administrador.setCorreo(correo);
+        administrador.setClave(clave);
+
+        serviceA.registrarAdministrador(administrador);
+        return "redirect:/presentation/login";
+    }
+
 }
