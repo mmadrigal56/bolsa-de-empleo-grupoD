@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Características</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+          crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarTogglerDemo03"
+                aria-controls="navbarTogglerDemo03"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/admin/dashboard">BolsaEmpleo</a>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/empresas/pendientes">Empresas pendientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/oferentes/pendientes">Oferentes pendientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/admin/caracteristicas">Características</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/reportes">Reportes</a>
+                </li>
+            </ul>
+            <span class="text-light me-3 small" th:text="${usuario != null ? usuario.correo : ''}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-4">
+
+    <h4>Características</h4>
+
+    <strong><small th:if="${error}" th:text="${error}" class="text-danger"></small></strong>
+
+    <div class="row mt-3 g-4">
+        <div class="col-md-6">
+            <div class="border rounded p-3 bg-light">
+
+                <p class="mb-1"><strong>Ruta:</strong></p>
+                <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                    <a th:href="@{/admin/caracteristicas}" class="btn btn-sm btn-outline-secondary">Raíces</a>
+                    <th:block th:each="nodo, iter : ${ruta}">
+                        <span class="text-muted">/</span>
+                        <a th:if="${!iter.last}"
+                           th:href="@{/admin/caracteristicas(actualId=${nodo.id})}"
+                           class="btn btn-sm btn-outline-secondary"
+                           th:text="${nodo.nombre}">Nodo</a>
+                        <span th:if="${iter.last}"
+                              class="btn btn-sm btn-outline-secondary disabled"
+                              th:text="${nodo.nombre}">Actual</span>
+                    </th:block>
+                </div>
+
+                <p class="text-muted small mb-3">
+                    <th:block th:if="${actual == null}">Categorías: <strong>raíces</strong></th:block>
+                    <th:block th:if="${actual != null}">Subcategorías de: <strong th:text="${actual.nombre}"></strong></th:block>
+                </p>
+
+                <p th:if="${#lists.isEmpty(categorias)}" class="text-muted fst-italic">
+                    No hay subcategorías aún.
+                </p>
+
+                <div th:each="cat : ${categorias}"
+                     class="d-flex justify-content-between align-items-center border rounded bg-white p-2 mb-2">
+                    <span th:text="${cat.nombre}" class="fw-semibold"></span>
+                    <a th:href="@{/admin/caracteristicas(actualId=${cat.id})}"
+                       class="btn btn-sm btn-outline-secondary">Entrar</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="border rounded p-3 bg-light">
+
+                <p class="fw-bold mb-3">Agregar Característica</p>
+
+                <form th:action="@{/admin/caracteristicas}" method="post">
+                    <input type="hidden" name="actualId"
+                           th:value="${actual != null ? actual.id : null}"/>
+
+                    <div class="row g-2 align-items-end">
+
+                        <div class="col-sm-4">
+                            <label class="form-label mb-1">Nombre</label>
+                            <input type="text" name="nombre" class="form-control form-control-sm"
+                                   placeholder="Nueva característica" required/>
+                        </div>
+
+                        <div class="col-sm-5">
+                            <label class="form-label mb-1">Padre</label>
+                            <select name="padreId" class="form-select form-select-sm">
+                                <th:block th:each="op : ${opcionesPadre}">
+                                    <option th:value="${op.id}"
+                                            th:text="${op.nombre}"
+                                            th:selected="${actual != null and op.id == actual.id}">
+                                    </option>
+                                </th:block>
+                                <option value="">(sin padre)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Crear</button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>
