@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Empresas pendientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin/dashboard">BolsaEmpleo</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/admin/empresas/pendientes">Empresas pendientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/oferentes/pendientes">Oferentes pendientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/caracteristicas">Características</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/reportes">Reportes</a></li>
+            </ul>
+            <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-4">
+    <h4>Empresas pendientes</h4>
+
+    <div th:if="${#lists.isEmpty(empresas)}" class="alert alert-info mt-3">
+        No hay empresas pendientes de aprobación.
+    </div>
+
+    <table th:if="${!#lists.isEmpty(empresas)}" class="table table-bordered mt-3">
+        <thead class="table-dark">
+        <tr>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Localización</th>
+            <th>Acción</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${empresas}">
+            <td th:text="${e.correo}"></td>
+            <td th:text="${e.nombre}"></td>
+            <td th:text="${e.telefono}"></td>
+            <td th:text="${e.localizacion}"></td>
+            <td>
+                <form th:action="@{/admin/empresas/pendientes/aprobar}" method="post">
+                    <input type="hidden" name="id" th:value="${e.id}"/>
+                    <button type="submit" class="btn btn-sm btn-success">Aprobar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+</body>
+</html>

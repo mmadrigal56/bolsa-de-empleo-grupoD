@@ -1,8 +1,11 @@
 package com.example.bolsadeempleo.logic.oferente;
 
 import com.example.bolsadeempleo.data.*;
+import com.example.bolsadeempleo.logic.empresa.Empresa;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.List;
 
 @org.springframework.stereotype.Service
 public class ServiceO {
@@ -24,4 +27,19 @@ public class ServiceO {
     public void actualizarOferente(Oferente oferente) {
         oferenteRepository.save(oferente);
     }
+
+    public List<Oferente> findPendientes() {
+        return oferenteRepository.findByAutorizadoFalse();
+    }
+
+    public void aprobarOferente(int id)
+    {
+        oferenteRepository.findById(id).ifPresent(oferente -> {
+            oferente.setAutorizado(true);
+            oferenteRepository.save(oferente);
+        });
+    }
+
+
+
 }

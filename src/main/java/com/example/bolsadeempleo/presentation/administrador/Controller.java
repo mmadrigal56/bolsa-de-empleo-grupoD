@@ -4,6 +4,8 @@ import com.example.bolsadeempleo.logic.administrador.ServiceA;
 import com.example.bolsadeempleo.logic.administrador.Administrador;
 import com.example.bolsadeempleo.logic.caracteristica.Caracteristica;
 import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
+import com.example.bolsadeempleo.logic.empresa.ServiceE;
+import com.example.bolsadeempleo.logic.oferente.ServiceO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +24,17 @@ public class Controller {
     @Autowired
     private ServiceC serviceC;
 
+    @Autowired
+    private ServiceO serviceO;
+
+    @Autowired
+    private ServiceE serviceE;
+
     private boolean esAdmin(HttpSession session) {
         Object u = session.getAttribute("usuario");
         return (u instanceof Administrador);
     }
+
     @GetMapping("/presentation/administrador/show")
     public String show(Model model, HttpSession session) {
         Object usuario = session.getAttribute("usuario");
@@ -98,7 +107,7 @@ public class Controller {
                 ? serviceC.findRoots()
                 : serviceC.findHijos(actual);
 
-        List<Caracteristica> ruta        = serviceC.buildRuta(actual);
+        List<Caracteristica> ruta = serviceC.buildRuta(actual);
         List<Caracteristica> opcionesPadre = categorias;
 
         model.addAttribute("usuario", session.getAttribute("usuario"));
@@ -111,4 +120,39 @@ public class Controller {
             model.addAttribute("error", error);
         }
     }
+
+    //    Testing para aprobaciones de empresas y de empleados.
+    @GetMapping("/admin/empresas/pendientes")
+    public String empresasPendientes(Model model, HttpSession session) {
+        if (!esAdmin(session)) return "redirect:/";
+        model.addAttribute("usuario", session.getAttribute("usuario"));
+        model.addAttribute("empresas", serviceE.findPendientes());
+        return "presentation/administrador/ViewEmpresasPendientes";
+    }
+
+    @GetMapping("/admin/oferentes/pendientes")
+    public String oferentesPendientes(Model model, HttpSession session) {
+        if (!esAdmin(session)) return "redirect:/";
+        model.addAttribute("usuario", session.getAttribute("usuario"));
+        model.addAttribute("oferentes", serviceO.findPendientes());
+        return "presentation/administrador/ViewOferentesPendientes";
+    }
+
+    @PostMapping("/admin/empresas/pendientes/aprobar")
+    public String aprobarEmpresa(@RequestParam Integer id, HttpSession session)
+    {
+        if (!esAdmin(session)) return "redirect:/";
+        serviceE.aprobarEmpresa(id);
+        return "redirect:/admin/empresas/pendientes";
+    }
+
+    @PostMapping("/admin/oferentes/pendientes/aprobar")
+    public String aprobarOferente(@RequestParam Integer id, HttpSession session)
+    {
+        if (!esAdmin(session)) return "redirect:/";
+        serviceO.aprobarOferente(id);
+        return "redirect:/admin/oferentes/pendientes";
+    }
+
 }
+
