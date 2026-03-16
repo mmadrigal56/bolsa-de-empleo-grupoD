@@ -1,5 +1,7 @@
 package com.example.bolsadeempleo.presentation.oferentes;
 
+import com.example.bolsadeempleo.logic.caracteristica.Caracteristica;
+import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
 import com.example.bolsadeempleo.logic.oferente.ServiceO;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad;
@@ -11,13 +13,23 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 
 @org.springframework.stereotype.Controller("oferentes")
 public class Controller {
     @Autowired
     private ServiceO serviceO;
 
+    @Autowired
     private ServiceOH serviceOH;
+
+    @Autowired
+    private ServiceC serviceC;
+
+    private boolean esOferente(HttpSession session) {
+        return session.getAttribute("usuario") instanceof Oferente;
+    }
 
     @GetMapping("/presentation/oferentes/show")
     public String show(Model model, HttpSession session)
@@ -74,5 +86,56 @@ public class Controller {
         session.setAttribute("usuario", oferente);
         return "redirect:/oferente/cv";
     }
+
+//    Habilidades.
+
+     @GetMapping("/oferente/habilidades")
+    public String habilidades(@RequestParam(required = false) Integer actualId, HttpSession session, Model model)
+     {
+         if (!esOferente(session)) return "redirect:/";
+         Oferente oferente = (Oferente) session.getAttribute("usuario");
+
+         Caracteristica actual = serviceC.findById(actualId); //ActualId es el ID de la habilidad.
+         List<Caracteristica> categorias = (actual == null) ? serviceC.findRoots() : serviceC.findHijos(actual);
+
+         model.addAttribute("usuario", oferente);
+         model.addAttribute("actual", actual);
+         model.addAttribute("categorias", categorias);
+         model.addAttribute("ruta", serviceC.buildRuta(actual));
+         model.addAttribute("habilidades", serviceOH.findByOferente(oferente));
+         return "presentation/oferentes/ViewHabilidades";
+     }
+
+
+    @PostMapping("/oferente/habilidades/agregar")
+    public String agregar(@RequestParam Integer caracteristicaId,
+                          @RequestParam int nivel,
+                          @RequestParam(required = false) Integer actualId,
+                          HttpSession session) {
+        if (!esOferente(session)) return "redirect:/";
+        Oferente oferente = (Oferente) session.getAttribute("usuario");
+        Caracteristica c = serviceC.findById(caracteristicaId);
+
+        if (c != null && serviceC.findHijos(c).isEmpty()) {
+            serviceOH.agregarOActualizar(oferente, c, nivel);
+        }
+
+        String redirect = "/oferente/habilidades";
+        if (actualId != null) redirect += "?actualId=" + actualId;
+        return "redirect:" + redirect;
+    }
+
+    @PostMapping("/oferente/habilidades/eliminar")
+    public String eliminar(@RequestParam Integer habilidadId, @RequestParam(required = false) Integer actualId, HttpSession session)
+    {
+        if (!esOferente(session)) return "redirect:/";
+        serviceOH.eliminar(habilidadId);
+
+        String redirect = "/oferente/habilidades";
+        if (actualId != null) redirect += "?actualId=" + actualId;
+        return "redirect:" + redirect;
+    }
 }
+
+
 

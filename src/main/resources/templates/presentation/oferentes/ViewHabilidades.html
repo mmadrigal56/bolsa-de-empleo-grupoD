@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Oferente - Mis habilidades</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/oferente/dashboard">BolsaEmpleo</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/oferente/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/oferente/habilidades">Mis habilidades</a></li>
+                <li class="nav-item"><a class="nav-link" href="/oferente/cv">Mi CV</a></li>
+            </ul>
+            <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-4">
+    <h4>Mis habilidades</h4>
+
+    <div class="row mt-3 g-4">
+
+        <div class="col-md-4">
+            <div class="border rounded p-3 bg-light h-100">
+                <p class="fw-bold mb-3">Habilidades registradas</p>
+
+                <p th:if="${#lists.isEmpty(habilidades)}" class="text-muted fst-italic">
+                    Aún no tenés habilidades registradas.
+                </p>
+
+                <table th:if="${!#lists.isEmpty(habilidades)}" class="table table-sm table-bordered bg-white">
+                    <thead class="table-secondary">
+                    <tr>
+                        <th>Característica</th>
+                        <th>Nivel</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="h : ${habilidades}">
+                        <td th:text="${h.caracteristica.nombre}"></td>
+                        <td th:text="${h.nivel}"></td>
+                        <td>
+                            <form th:action="@{/oferente/habilidades/eliminar}" method="post">
+                                <input type="hidden" name="habilidadId" th:value="${h.id}"/>
+                                <input type="hidden" name="actualId"
+                                       th:value="${actual != null ? actual.id : null}"/>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">✕</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="border rounded p-3 bg-light h-100">
+                <p class="mb-1"><strong>Ruta:</strong></p>
+                <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                    <a th:href="@{/oferente/habilidades}" class="btn btn-sm btn-outline-secondary">Raíces</a>
+                    <th:block th:each="nodo, iter : ${ruta}">
+                        <span class="text-muted">/</span>
+                        <a th:if="${!iter.last}"
+                           th:href="@{/oferente/habilidades(actualId=${nodo.id})}"
+                           class="btn btn-sm btn-outline-secondary"
+                           th:text="${nodo.nombre}">Nodo</a>
+                        <span th:if="${iter.last}"
+                              class="btn btn-sm btn-outline-secondary disabled"
+                              th:text="${nodo.nombre}">Actual</span>
+                    </th:block>
+                </div>
+
+                <p class="text-muted small mb-3">
+                    <th:block th:if="${actual == null}">Categorías: <strong>raíces</strong></th:block>
+                    <th:block th:if="${actual != null}">Subcategorías de: <strong th:text="${actual.nombre}"></strong></th:block>
+                </p>
+
+                <p th:if="${#lists.isEmpty(categorias)}" class="text-muted fst-italic">
+                    No hay subcategorías. Puede agregar esta característica desde el panel derecho.
+                </p>
+
+                <div th:each="cat : ${categorias}"
+                     class="d-flex justify-content-between align-items-center border rounded bg-white p-2 mb-2">
+                    <span th:text="${cat.nombre}" class="fw-semibold"></span>
+                    <a th:href="@{/oferente/habilidades(actualId=${cat.id})}"
+                       class="btn btn-sm btn-outline-secondary">Entrar</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="border rounded p-3 bg-light h-100">
+                <p class="fw-bold mb-3">Agregar Habilidad</p>
+
+                <div th:if="${actual == null}" class="text-muted small fst-italic">
+                    Navegue el árbol de la izquierda hasta llegar a una habilidad específica.
+                </div>
+
+                <div th:if="${actual != null and !#lists.isEmpty(categorias)}">
+                    <p class="text-muted small">
+                        <strong th:text="${actual.nombre}"></strong> tiene subcategorías.
+                        Entre en una subcategoría para agregar una habilidad específica.
+                    </p>
+                    <div class="alert alert-warning py-2 small">
+                        Solo puede agregar habilidades del nivel más específico (sin subcategorías).
+                    </div>
+                </div>
+
+                <div th:if="${actual != null and #lists.isEmpty(categorias)}">
+                    <p class="text-muted small mb-3">
+                        Vas a agregar: <strong th:text="${actual.nombre}"></strong>
+                    </p>
+                    <form th:action="@{/oferente/habilidades/agregar}" method="post">
+                        <input type="hidden" name="caracteristicaId" th:value="${actual.id}"/>
+                        <input type="hidden" name="actualId" th:value="${actual.id}"/>
+
+                        <div class="mb-3">
+                            <label class="form-label mb-1">Nivel (1-5)</label>
+                            <input type="number" name="nivel" min="1" max="5"
+                                   class="form-control form-control-sm" required/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-sm w-100">Agregar</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
