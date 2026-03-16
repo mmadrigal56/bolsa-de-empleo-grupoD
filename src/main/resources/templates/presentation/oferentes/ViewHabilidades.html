@@ -46,7 +46,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="h : ${habilidades}">
-                        <td th:text="${h.caracteristica.nombre}"></td>
+                        <td th:text="${rutasHabilidades[h.id]}"></td>
                         <td th:text="${h.nivel}"></td>
                         <td>
                             <form th:action="@{/oferente/habilidades/eliminar}" method="post">
@@ -102,23 +102,17 @@
                 <p class="fw-bold mb-3">Agregar Habilidad</p>
 
                 <div th:if="${actual == null}" class="text-muted small fst-italic">
-                    Navegue el árbol de la izquierda hasta llegar a una habilidad específica.
+                    Navegue el árbol hasta la característica que desea agregar.
                 </div>
 
-                <div th:if="${actual != null and !#lists.isEmpty(categorias)}">
-                    <p class="text-muted small">
-                        <strong th:text="${actual.nombre}"></strong> tiene subcategorías.
-                        Entre en una subcategoría para agregar una habilidad específica.
+                <div th:if="${actual != null}">
+                    <p class="text-muted small mb-1">
+                        Va a agregar: <strong th:text="${actual.nombre}"></strong>
                     </p>
-                    <div class="alert alert-warning py-2 small">
-                        Solo puede agregar habilidades del nivel más específico (sin subcategorías).
+                    <div th:if="${!#lists.isEmpty(categorias)}" class="alert alert-info py-2 small mb-3">
+                        Esta característica tiene subcategorías. También puede entrar en ellas para ser más específico.
                     </div>
-                </div>
 
-                <div th:if="${actual != null and #lists.isEmpty(categorias)}">
-                    <p class="text-muted small mb-3">
-                        Vas a agregar: <strong th:text="${actual.nombre}"></strong>
-                    </p>
                     <form th:action="@{/oferente/habilidades/agregar}" method="post">
                         <input type="hidden" name="caracteristicaId" th:value="${actual.id}"/>
                         <input type="hidden" name="actualId" th:value="${actual.id}"/>
@@ -128,11 +122,9 @@
                             <input type="number" name="nivel" min="1" max="5"
                                    class="form-control form-control-sm" required/>
                         </div>
-
                         <button type="submit" class="btn btn-primary btn-sm w-100">Agregar</button>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>

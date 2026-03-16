@@ -70,5 +70,9 @@ public class ServiceC {
         caracteristicaRepository.save(c);
     }
 
-
+    public String buildRutaString(Caracteristica c) {
+        return buildRuta(c).stream()
+                .map(Caracteristica::getNombre)
+                .collect(java.util.stream.Collectors.joining(" / "));
+    }
 }

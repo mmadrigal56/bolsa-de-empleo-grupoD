@@ -89,22 +89,32 @@ public class Controller {
 
 //    Habilidades.
 
-     @GetMapping("/oferente/habilidades")
-    public String habilidades(@RequestParam(required = false) Integer actualId, HttpSession session, Model model)
-     {
-         if (!esOferente(session)) return "redirect:/";
-         Oferente oferente = (Oferente) session.getAttribute("usuario");
+    @GetMapping("/oferente/habilidades")
+    public String habilidades(@RequestParam(required = false) Integer actualId,
+                              HttpSession session, Model model) {
+        if (!esOferente(session)) return "redirect:/";
+        Oferente oferente = (Oferente) session.getAttribute("usuario");
 
-         Caracteristica actual = serviceC.findById(actualId); //ActualId es el ID de la habilidad.
-         List<Caracteristica> categorias = (actual == null) ? serviceC.findRoots() : serviceC.findHijos(actual);
+        Caracteristica actual = serviceC.findById(actualId);
+        List<Caracteristica> categorias = (actual == null)
+                ? serviceC.findRoots()
+                : serviceC.findHijos(actual);
 
-         model.addAttribute("usuario", oferente);
-         model.addAttribute("actual", actual);
-         model.addAttribute("categorias", categorias);
-         model.addAttribute("ruta", serviceC.buildRuta(actual));
-         model.addAttribute("habilidades", serviceOH.findByOferente(oferente));
-         return "presentation/oferentes/ViewHabilidades";
-     }
+        List<com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad> habilidades = serviceOH.findByOferente(oferente);
+        java.util.Map<Integer, String> rutasHabilidades = new java.util.HashMap<>();
+        for (var h : habilidades) {
+            rutasHabilidades.put(h.getId(), serviceC.buildRutaString(h.getCaracteristica()));
+        }
+
+        model.addAttribute("usuario", oferente);
+        model.addAttribute("actual", actual);
+        model.addAttribute("categorias", categorias);
+        model.addAttribute("ruta", serviceC.buildRuta(actual));
+        model.addAttribute("habilidades", habilidades);
+        model.addAttribute("rutasHabilidades", rutasHabilidades);
+
+        return "presentation/oferentes/ViewHabilidades";
+    }
 
 
     @PostMapping("/oferente/habilidades/agregar")
@@ -116,7 +126,7 @@ public class Controller {
         Oferente oferente = (Oferente) session.getAttribute("usuario");
         Caracteristica c = serviceC.findById(caracteristicaId);
 
-        if (c != null && serviceC.findHijos(c).isEmpty()) {
+        if (c != null) {
             serviceOH.agregarOActualizar(oferente, c, nivel);
         }
 

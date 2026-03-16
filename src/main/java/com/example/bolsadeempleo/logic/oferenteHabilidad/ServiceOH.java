@@ -22,8 +22,7 @@ public class ServiceOH {
     }
 
     public void agregarOActualizar(Oferente oferente, Caracteristica caracteristica, int nivel) {
-        Optional<OferenteHabilidad> existente = oferenteHabilidadRepository
-                .findByOferenteAndCaracteristica(oferente, caracteristica);
+        Optional<OferenteHabilidad> existente = oferenteHabilidadRepository.findByOferenteAndCaracteristica(oferente, caracteristica);
 
         OferenteHabilidad h = existente.orElse(new OferenteHabilidad());
         h.setOferente(oferente);
