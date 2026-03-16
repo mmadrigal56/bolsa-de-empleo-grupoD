@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -91,20 +92,18 @@ public class Controller {
 
     @GetMapping("/oferente/habilidades")
     public String habilidades(@RequestParam(required = false) Integer actualId,
-                              HttpSession session, Model model) {
+                              HttpSession session, Model model)
+    {
         if (!esOferente(session)) return "redirect:/";
         Oferente oferente = (Oferente) session.getAttribute("usuario");
 
         Caracteristica actual = serviceC.findById(actualId);
-        List<Caracteristica> categorias = (actual == null)
-                ? serviceC.findRoots()
-                : serviceC.findHijos(actual);
+        List<Caracteristica> categorias = (actual == null) ? serviceC.findRoots() : serviceC.findHijos(actual);
 
-        List<com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad> habilidades = serviceOH.findByOferente(oferente);
-        java.util.Map<Integer, String> rutasHabilidades = new java.util.HashMap<>();
-        for (var h : habilidades) {
-            rutasHabilidades.put(h.getId(), serviceC.buildRutaString(h.getCaracteristica()));
-        }
+        List<OferenteHabilidad> habilidades = serviceOH.findByOferente(oferente);
+        Map<Integer, String> rutasHabilidades = new HashMap<>();
+
+        for (var h : habilidades) { rutasHabilidades.put(h.getId(), serviceC.buildRutaString(h.getCaracteristica())); }
 
         model.addAttribute("usuario", oferente);
         model.addAttribute("actual", actual);
@@ -121,7 +120,8 @@ public class Controller {
     public String agregar(@RequestParam Integer caracteristicaId,
                           @RequestParam int nivel,
                           @RequestParam(required = false) Integer actualId,
-                          HttpSession session) {
+                          HttpSession session)
+    {
         if (!esOferente(session)) return "redirect:/";
         Oferente oferente = (Oferente) session.getAttribute("usuario");
         Caracteristica c = serviceC.findById(caracteristicaId);
