@@ -40,6 +40,16 @@ public class ServiceO {
         });
     }
 
+    public String validarRegistro(String correo, String identificacion) {
+        if (oferenteRepository.findByCorreo(correo) != null) {
+            return "Ya existe un oferente registrado con ese correo.";
+        }
+        if (oferenteRepository.findByIdentificacion(identificacion) != null) {
+            return "Ya existe un oferente registrado con esa identificación.";
+        }
+        return null;
+    }
+
 
 
 
