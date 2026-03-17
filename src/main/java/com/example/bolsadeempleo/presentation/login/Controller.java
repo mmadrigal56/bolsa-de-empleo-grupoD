@@ -52,6 +52,11 @@ public class Controller {
             return "/presentation/login/View";
         }
 
+        if ("PENDIENTE".equals(usuario)) {
+            model.addAttribute("error", "Tu cuenta aún no ha sido autorizada por un administrador.");
+            return "/presentation/login/View";
+        }
+
         session.setAttribute("usuario", usuario);
         model.addAttribute("usuario", usuario);
 
@@ -106,7 +111,7 @@ public class Controller {
         empresa.setAutorizada(false);
 
         serviceE.registrarEmpresa(empresa);
-        return "redirect:/presentation/login";
+        return "redirect:/registro-pendiente";
     }
 
     @GetMapping("/registro/oferente")
@@ -145,7 +150,7 @@ public class Controller {
         oferente.setAutorizado(false);
 
         serviceO.registrarOferente(oferente);
-        return "redirect:/presentation/login";
+        return "redirect:/registro-pendiente";
     }
 
     @PostMapping("/registro/administrador")
@@ -159,6 +164,11 @@ public class Controller {
 
         serviceA.registrarAdministrador(administrador);
         return "redirect:/presentation/login";
+    }
+
+    @GetMapping("/registro-pendiente")
+    public String registroPendiente() {
+        return "presentation/login/ViewRegistroPendiente";
     }
 
 }
