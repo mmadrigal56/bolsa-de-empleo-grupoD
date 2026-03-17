@@ -11,4 +11,5 @@ public interface OferenteRepository extends CrudRepository<Oferente, Integer> {
     Oferente findOferenteByCorreoAndClave(String correo, String clave);
     Oferente findByCorreo(String correo);
     List<Oferente> findByAutorizadoFalse();
+    Oferente findByIdentificacion(String identificacion);
 }

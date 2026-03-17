@@ -99,7 +99,14 @@ public class Controller {
             @RequestParam String correo,
             @RequestParam String clave,
             @RequestParam String telefono,
-            @RequestParam String descripcion) {
+            @RequestParam String descripcion,
+            Model model) {
+
+        String error = serviceE.validarRegistro(correo);
+        if (error != null) {
+            model.addAttribute("error", error);
+            return "presentation/empresas/ViewRegistro";
+        }
 
         Empresa empresa = new Empresa();
         empresa.setNombre(nombre);
@@ -135,7 +142,14 @@ public class Controller {
             @RequestParam String correo,
             @RequestParam String clave,
             @RequestParam String lugarResidencia,
-            @RequestParam(required = false) String rutaCurriculum) {
+            @RequestParam(required = false) String rutaCurriculum,
+            Model model) {
+
+        String error = serviceO.validarRegistro(correo, identificacion);
+        if (error != null) {
+            model.addAttribute("error", error);
+            return "presentation/oferentes/ViewRegistro";
+        }
 
         Oferente oferente = new Oferente();
         oferente.setIdentificacion(identificacion);

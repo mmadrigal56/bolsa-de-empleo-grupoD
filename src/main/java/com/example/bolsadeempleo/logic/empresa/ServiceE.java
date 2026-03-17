@@ -34,4 +34,11 @@ public class ServiceE {
         });
     }
 
+    public String validarRegistro(String correo) {
+        if (empresaRepository.findByCorreo(correo) != null) {
+            return "Ya existe una empresa registrada con ese correo.";
+        }
+        return null;
+    }
+
 }
