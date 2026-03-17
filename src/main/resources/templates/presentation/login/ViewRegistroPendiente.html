@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bolsa de Empleo - Registro Pendiente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 40px 50px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin: 20px 0;
+        }
+        .icono {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        a.btn {
+            display: inline-block;
+            margin-top: 10px;
+            background-color: #0066cc;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        a.btn:hover {
+            background-color: #0052a3;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="icono">⏳</div>
+    <h1>Registro recibido</h1>
+    <p>
+        Tu solicitud fue enviada correctamente.<br><br>
+        <strong>Estás esperando autorización para poder ingresar.</strong><br><br>
+        Un administrador revisará tu solicitud próximamente.
+    </p>
+    <a th:href="@{/}" class="btn">Regresar al inicio</a>
+</div>
+</body>
+</html>

@@ -27,11 +27,17 @@ public class ServiceA {
     public Object findUserByEmailAndPassword(String correo, String clave) {
         Empresa empresa = empresaRepository.findByCorreo(correo);
         if (empresa != null && passwordEncoder.matches(clave, empresa.getClave())) {
+            if (!empresa.getAutorizada()) {
+                return "PENDIENTE";
+            }
             return empresa;
         }
 
         Oferente oferente = oferenteRepository.findByCorreo(correo);
         if (oferente != null && passwordEncoder.matches(clave, oferente.getClave())) {
+            if (!oferente.getAutorizado()) {
+                return "PENDIENTE";
+            }
             return oferente;
         }
 
