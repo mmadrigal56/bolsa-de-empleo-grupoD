@@ -44,6 +44,10 @@ public class ServiceC {
     public void crearCaracteristica(String nombre, Integer padreId)
     {
         String nombreLimpio = nombre.trim();
+
+        if (nombreLimpio.isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la característica no puede estar vacío.");
+        }
         Caracteristica padre = findById(padreId);
 
         boolean existe;
