@@ -4,6 +4,7 @@ import com.example.bolsadeempleo.logic.puestoCaracteristica.PuestoCaracteristica
 import com.example.bolsadeempleo.logic.empresa.Empresa;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -55,5 +56,17 @@ public class Puesto {
 
     @OneToMany(mappedBy = "puesto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PuestoCaracteristica> requisitos = new LinkedHashSet<>();
+    @Size(max = 10)
+
+    @NotNull
+    @ColumnDefault("'CRC'")
+    @Column(name = "moneda", nullable = false, length = 10)
+    private String moneda;
+    @Size(max = 200)
+
+    @NotNull
+    @ColumnDefault("'Sin nombre'")
+    @Column(name = "nombre", nullable = false, length = 200)
+    private String nombre;
 
 }

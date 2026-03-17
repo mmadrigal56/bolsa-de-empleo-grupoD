@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Empresa - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navEmpresa" aria-controls="navEmpresa"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/empresa/dashboard">BolsaEmpleo</a>
+        <div class="collapse navbar-collapse" id="navEmpresa">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/empresa/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/empresa/puestos">Mis puestos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/empresa/puestos/nuevo">Publicar puesto</a>
+                </li>
+            </ul>
+            <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-4">
+    <h4>Empresa - Dashboard</h4>
+    <p class="text-muted">Administrá tus puestos y buscá candidatos.</p>
+    <a href="/empresa/puestos" class="btn btn-outline-primary me-2">Ver mis puestos</a>
+    <a href="/empresa/puestos/nuevo" class="btn btn-primary">Publicar nuevo puesto</a>
+</main>
+
+</body>
+</html>
