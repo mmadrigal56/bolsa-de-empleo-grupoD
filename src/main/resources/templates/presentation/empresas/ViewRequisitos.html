@@ -35,6 +35,8 @@
         <span th:text="${puesto.esPublico ? 'Público' : 'Privado'}"></span>
     </p>
 
+    <div th:if="${error}" class="alert alert-danger mt-2" th:text="${error}"></div>
+
     <div class="row mt-3 g-4">
 
         <div class="col-md-4">
@@ -67,13 +69,14 @@
                     </tbody>
                 </table>
 
-                <a href="/empresa/dashboard" class="btn btn-success btn-sm w-100 mt-2">
-                    Finalizar ✓
-                </a>
+                <form th:action="@{/empresa/puestos/{id}/finalizar(id=${puesto.id})}" method="post">
+                    <button type="submit" class="btn btn-success btn-sm w-100 mt-2">
+                        Finalizar ✓
+                    </button>
+                </form>
             </div>
         </div>
 
-        <!-- Columna 2: Árbol -->
         <div class="col-md-4">
             <div class="border rounded p-3 bg-light h-100">
                 <p class="mb-1"><strong>Ruta:</strong></p>
@@ -112,7 +115,6 @@
             </div>
         </div>
 
-        <!-- Columna 3: Agregar -->
         <div class="col-md-4">
             <div class="border rounded p-3 bg-light h-100">
                 <p class="fw-bold mb-3">Agregar Característica</p>

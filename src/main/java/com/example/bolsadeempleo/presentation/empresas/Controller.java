@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.stream.Collectors.toMap;
@@ -190,6 +191,38 @@ public class Controller {
         String redirect = "/empresa/puestos/" + id + "/requisitos";
         if (actualId != null) redirect += "?actualId=" + actualId;
         return "redirect:" + redirect;
+    }
+
+   //End point para lo de carcaterísticas en puestos vacíos.
+    @PostMapping("/empresa/puestos/{id}/finalizar")
+    public String finalizarPuesto(@PathVariable Integer id, HttpSession session, Model model)
+    {
+        if (!esEmpresa(session)) return "redirect:/";
+        Empresa empresa = (Empresa) session.getAttribute("usuario");
+
+        Puesto puesto = serviceP.findById(id)
+                .filter(p -> p.getEmpresa().getId().equals(empresa.getId()))
+                .orElse(null);
+        if (puesto == null) return "redirect:/empresa/dashboard";
+
+        List<PuestoCaracteristica> requisitos = serviceP.findRequisitosByPuesto(puesto);
+
+        if (requisitos.isEmpty()) {
+            Caracteristica actual = serviceC.findById(null);
+            List<Caracteristica> categorias = serviceC.findRoots();
+
+            model.addAttribute("usuario", empresa);
+            model.addAttribute("puesto", puesto);
+            model.addAttribute("actual", null);
+            model.addAttribute("categorias", categorias);
+            model.addAttribute("ruta", serviceC.buildRuta(null));
+            model.addAttribute("requisitos", requisitos);
+            model.addAttribute("rutasRequisitos", new HashMap<>());
+            model.addAttribute("error", "Debe agregar al menos una característica antes de publicar el puesto.");
+            return "presentation/empresas/ViewRequisitos";
+        }
+
+        return "redirect:/empresa/dashboard";
     }
 }
 
