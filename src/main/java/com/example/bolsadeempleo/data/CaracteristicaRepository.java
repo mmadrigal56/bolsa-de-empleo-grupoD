@@ -15,5 +15,4 @@ public interface CaracteristicaRepository extends CrudRepository<Caracteristica,
     Optional<Caracteristica> findByNombreIgnoreCaseAndPadreIsNull(String nombre);
 
 
-
 }
