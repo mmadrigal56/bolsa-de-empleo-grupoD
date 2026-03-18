@@ -53,6 +53,25 @@ public class Controller {
         return "presentation/empresas/ViewDashboard";
     }
 
+    @GetMapping("/empresa/puestos")
+    public String misPuestos(HttpSession session, Model model) {
+        if (!esEmpresa(session)) return "redirect:/";
+        Empresa empresa = (Empresa) session.getAttribute("usuario");
+        model.addAttribute("usuario", empresa);
+        model.addAttribute("puestos", serviceP.findByEmpresa(empresa));
+        return "presentation/empresas/viewPuestos";
+    }
+
+    @PostMapping("/empresa/puestos/{id}/desactivar")
+    public String desactivarPuesto(@PathVariable Integer id, HttpSession session) {
+        if (!esEmpresa(session)) return "redirect:/";
+        Empresa empresa = (Empresa) session.getAttribute("usuario");
+        serviceP.findById(id)
+                .filter(p -> p.getEmpresa().getId().equals(empresa.getId()))
+                .ifPresent(p -> serviceP.desactivarPuesto(p.getId()));
+        return "redirect:/empresa/puestos";
+    }
+
 
     @GetMapping("/presentation/empresas/puestos")
     public String puestos(Model model, HttpSession session) {
