@@ -4,6 +4,9 @@ import com.example.bolsadeempleo.logic.caracteristica.Caracteristica;
 import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
 import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.empresa.ServiceE;
+import com.example.bolsadeempleo.logic.oferente.Oferente;
+import com.example.bolsadeempleo.logic.oferente.ServiceO;
+import com.example.bolsadeempleo.logic.oferenteHabilidad.ServiceOH;
 import com.example.bolsadeempleo.logic.puesto.Puesto;
 import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import com.example.bolsadeempleo.logic.puestoCaracteristica.PuestoCaracteristica;
@@ -34,6 +37,12 @@ public class Controller {
 
     @Autowired
     private ServiceC serviceC;
+
+    @Autowired
+    private ServiceO serviceO;
+
+    @Autowired
+    private ServiceOH serviceOH;
 
     private boolean esEmpresa(HttpSession session) {
         return session.getAttribute("usuario") instanceof Empresa;
@@ -242,6 +251,45 @@ public class Controller {
         }
 
         return "redirect:/empresa/dashboard";
+    }
+
+    @GetMapping("/empresa/candidatos/buscar")
+    public String buscarCandidatos(@RequestParam Integer puestoId,
+                                   HttpSession session, Model model) {
+        if (!esEmpresa(session)) return "redirect:/";
+        Empresa empresa = (Empresa) session.getAttribute("usuario");
+
+        Puesto puesto = serviceP.findById(puestoId)
+                .filter(p -> p.getEmpresa().getId().equals(empresa.getId()))
+                .orElse(null);
+        if (puesto == null) return "redirect:/empresa/puestos";
+
+        model.addAttribute("usuario", empresa);
+        model.addAttribute("puesto", puesto);
+        model.addAttribute("candidatos", serviceP.buscarCandidatos(puesto));
+        return "presentation/empresas/ViewCandidatos";
+    }
+
+    @GetMapping("/empresa/candidatos/{oferenteId}")
+    public String verDetalleCandidato(@PathVariable Integer oferenteId,
+                                      @RequestParam Integer puestoId,
+                                      HttpSession session, Model model) {
+        if (!esEmpresa(session)) return "redirect:/";
+        Empresa empresa = (Empresa) session.getAttribute("usuario");
+
+        Puesto puesto = serviceP.findById(puestoId)
+                .filter(p -> p.getEmpresa().getId().equals(empresa.getId()))
+                .orElse(null);
+        if (puesto == null) return "redirect:/empresa/puestos";
+
+        Oferente oferente = serviceO.findById(oferenteId);
+        if (oferente == null) return "redirect:/empresa/candidatos/buscar?puestoId=" + puestoId;
+
+        model.addAttribute("usuario", empresa);
+        model.addAttribute("puesto", puesto);
+        model.addAttribute("oferente", oferente);
+        model.addAttribute("habilidades", serviceOH.findByOferente(oferente));
+        return "presentation/empresas/ViewDetalleCandidato";
     }
 }
 
