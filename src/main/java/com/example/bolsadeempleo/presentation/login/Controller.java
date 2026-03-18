@@ -6,6 +6,7 @@ import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.empresa.ServiceE;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferente.ServiceO;
+import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +28,12 @@ public class Controller {
     @Autowired
     private ServiceO serviceO;
 
+    @Autowired
+    private ServiceP serviceP;
+
     @GetMapping("/")
     public String index(Model model) {
+        model.addAttribute("ultimosPuestos", serviceP.getUltimosPuestosPublicos());
         return "presentation/index";
     }
 

@@ -117,11 +117,71 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             transition: transform 0.3s, box-shadow 0.3s;
             border: 1px solid #e9ecef;
+            position: relative;
         }
 
         .puesto-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .tooltip-caracteristicas {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #e9ecef;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 1rem 1.5rem;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        }
+
+        .puesto-card:hover .tooltip-caracteristicas {
+            display: block;
+        }
+
+        .tooltip-caracteristicas h4 {
+            font-size: 0.9rem;
+            color: #0066cc;
+            margin-bottom: 0.5rem;
+        }
+
+        .tooltip-caracteristicas ul {
+            list-style: disc;
+            padding-left: 1.2rem;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .tooltip-caracteristicas ul li {
+            margin-bottom: 0.2rem;
+        }
+
+        .tooltip-sin-requisitos {
+            font-size: 0.85rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        .invite-msg {
+            margin-top: 2rem;
+            padding: 1rem 1.5rem;
+            background-color: #e8f4fd;
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            color: #0066cc;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .invite-msg a {
+            color: #0052a3;
+            font-weight: 600;
+            text-decoration: underline;
         }
 
         .puesto-header {
@@ -338,40 +398,70 @@
     <!-- TÍTULO DE SECCIÓN -->
     <h2 style="margin-top: 2rem; color: #333;">📌 Puestos recién registrados</h2>
 
-    <!-- GRID DE PUESTOS -->
-<!--    <div class="puestos-grid">-->
-<!--        &lt;!&ndash; Aquí se iterarán los puestos que vienen del controlador &ndash;&gt;-->
-<!--        <div class="puesto-card" th:each="puesto : ${ultimosPuestos}">-->
-<!--            <div class="puesto-header">-->
-<!--                <h3 class="puesto-titulo" th:text="${puesto.descripcion}">Desarrollador Java</h3>-->
-<!--            </div>-->
+     GRID DE PUESTOS
+    <div class="puestos-grid">
+        <!-- Aquí se iterarán los puestos que vienen del controlador -->
+        <div class="puesto-card" th:each="puesto : ${ultimosPuestos}">
+            <div class="puesto-header">
+                <h3 class="puesto-titulo" th:text="${puesto.nombre}">Nombre del puesto</h3>
+            </div>
 
-<!--            <div class="puesto-empresa">-->
-<!--                <span th:text="${puesto.empresa.nombre}">Empresa XYZ</span>-->
-<!--            </div>-->
+            <div class="puesto-empresa">
+                <span th:text="${puesto.empresa.nombre}">Empresa XYZ</span>
+            </div>
 
-<!--            <p class="puesto-descripcion" th:text="${puesto.descripcion}">-->
-<!--                Descripción del puesto...-->
-<!--            </p>-->
+            <p class="puesto-descripcion" th:text="${puesto.descripcion}">
+                Descripción del puesto...
+            </p>
 
-<!--            <div class="puesto-detalles">-->
-<!--                <span class="puesto-salario" th:text="'₡' + ${puesto.salario}">₡1,500,000</span>-->
-<!--                <span class="puesto-fecha" th:text="${#temporals.format(puesto.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</span>-->
-<!--            </div>-->
+            <div class="puesto-detalles">
+                <span class="puesto-salario"
+                      th:with="simbolo=${puesto.moneda == 'USD' ? '$' : (puesto.moneda == 'EUR' ? '€' : '₡')}"
+                      th:text="${simbolo + ' ' + #numbers.formatDecimal(puesto.salario, 1, 'POINT', 2, 'COMMA')}">
+                    ₡1,500,000
+                </span>
+                <span class="puesto-fecha"
+                      th:text="${#temporals.format(puesto.fechaRegistro, 'dd/MM/yyyy')}">
+                    01/01/2024
+                </span>
+            </div>
 
-<!--            <div>-->
-<!--                    <span class="puesto-tipo" th:classappend="${puesto.esPublico} ? 'tipo-publico' : 'tipo-privado'"-->
-<!--                          th:text="${puesto.esPublico} ? 'Público' : 'Privado'">Público</span>-->
-<!--            </div>-->
+            <div>
+                    <span class="puesto-tipo"
+                          th:classappend="${puesto.esPublico} ? 'tipo-publico' : 'tipo-privado'"
+                          th:text="${puesto.esPublico} ? 'Público' : 'Privado'">
+                        Público
+                    </span>
+            </div>
 
-<!--            <a href="#" class="btn-ver-mas">Ver detalles →</a>-->
-<!--        </div>-->
+            <div class="tooltip-caracteristicas">
+                <h4 th:text="${puesto.nombre}">Nombre del puesto</h4>
 
-<!--        &lt;!&ndash; Mensaje si no hay puestos &ndash;&gt;-->
-<!--        <div th:if="${ultimosPuestos == null or ultimosPuestos.isEmpty()}" class="loading-placeholder">-->
-<!--            <p>No hay puestos publicados aún. ¡Vuelve pronto!</p>-->
-<!--        </div>-->
-<!--    </div>-->
+                <ul th:if="${!puesto.requisitos.isEmpty()}">
+                    <li th:each="req : ${puesto.requisitos}"
+                        th:text="${req.caracteristica.nombre + ' (nivel ' + req.nivel + ')'}">
+                    </li>
+                </ul>
+
+                <p th:if="${puesto.requisitos.isEmpty()}" class="tooltip-sin-requisitos">
+                    Sin características registradas.
+                </p>
+            </div>
+        </div>
+
+        <!-- Mensaje si no hay puestos -->
+        <div th:if="${ultimosPuestos == null or ultimosPuestos.isEmpty()}" class="loading-placeholder">
+            <p>No hay puestos publicados aún. ¡Vuelve pronto!</p>
+        </div>
+    </div>
+
+    <div th:if="${session.usuario == null}" class="invite-msg">
+        <strong>¿Querés ver todos los puestos disponibles?</strong><br>
+        <a th:href="@{/presentation/login}">Iniciá sesión</a>
+        o
+        <a th:href="@{/registro}">registrate</a>
+        para acceder a todas las oportunidades laborales, incluyendo las privadas.
+    </div>
 </main>
 
 <!-- FOOTER -->

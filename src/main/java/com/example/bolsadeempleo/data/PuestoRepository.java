@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface PuestoRepository extends CrudRepository<Puesto, Integer> {
     List<Puesto> findByEmpresa(Empresa empresa);
-
+    List<Puesto> findTop5ByEsPublicoTrueAndActivoTrueOrderByFechaRegistroDesc();
 }
