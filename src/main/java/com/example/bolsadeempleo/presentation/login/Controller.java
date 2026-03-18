@@ -37,6 +37,19 @@ public class Controller {
         return "presentation/index";
     }
 
+    @GetMapping("/puestos")
+    public String todosPuestos(HttpSession session, Model model) {
+        Object usuario = session.getAttribute("usuario");
+
+        if (!(usuario instanceof Empresa) && !(usuario instanceof Oferente)) {
+            return "redirect:/presentation/login";
+        }
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("todosPuestos", serviceP.findAllActivos());
+        return "presentation/puestos/ViewTodosPuestos";
+    }
+
     @GetMapping("/presentation/login")
     public String loginForm(Model model) {
         return "/presentation/login/View";
