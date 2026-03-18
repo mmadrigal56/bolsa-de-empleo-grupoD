@@ -30,6 +30,15 @@ public class ServiceP {
         return puestoRepository.findById(id);
     }
 
+    public List<Puesto> getUltimosPuestosPublicos() {
+        return puestoRepository.findTop5ByEsPublicoTrueAndActivoTrueOrderByFechaRegistroDesc();
+    }
+
+    public List<Puesto> findAllActivos() {
+        return puestoRepository.findByActivoTrueOrderByFechaRegistroDesc();
+    }
+
+
     public Puesto crearPuesto(Empresa empresa, String nombre, String descripcion, Double salario, Boolean esPublico, String moneda)
     {
         Puesto p = new Puesto();

@@ -2,7 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Bolsa de Empleo - Encuentra tu próximo trabajo</title>
+    <title>Bolsa de Empleo - Todos los puestos</title>
+    <!-- Bootstrap solo para la navbar oscura, no toca el resto del CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+          crossorigin="anonymous">
     <style>
         /* RESET BÁSICO */
         * {
@@ -19,66 +24,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        /* HEADER */
-        .header {
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #0066cc;
-        }
-
-        .logo span {
-            color: #28a745;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.6rem 1.2rem;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-outline {
-            border: 1px solid #0066cc;
-            color: #0066cc;
-            background: transparent;
-        }
-
-        .btn-outline:hover {
-            background-color: #0066cc;
-            color: white;
-        }
-
-        .btn-primary {
-            background-color: #0066cc;
-            color: white;
-            border: 1px solid #0066cc;
-        }
-
-        .btn-primary:hover {
-            background-color: #0052a3;
         }
 
         /* MAIN CONTENT */
@@ -165,23 +110,6 @@
             font-size: 0.85rem;
             color: #999;
             font-style: italic;
-        }
-
-        .invite-msg {
-            margin-top: 2rem;
-            padding: 1rem 1.5rem;
-            background-color: #e8f4fd;
-            border: 1px solid #bee3f8;
-            border-radius: 8px;
-            color: #0066cc;
-            text-align: center;
-            font-size: 0.95rem;
-        }
-
-        .invite-msg a {
-            color: #0052a3;
-            font-weight: 600;
-            text-decoration: underline;
         }
 
         .puesto-header {
@@ -319,27 +247,7 @@
             text-decoration: underline;
         }
 
-        /* ESTADO DE SESIÓN */
-        .user-info-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-greeting {
-            color: #28a745;
-            font-weight: 500;
-        }
-
-        .user-role {
-            background-color: #e8f4fd;
-            color: #0066cc;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-
-        /* LOADING PLACEHOLDER (para cuando no hay datos) */
+        /* LOADING PLACEHOLDER */
         .loading-placeholder {
             text-align: center;
             padding: 3rem;
@@ -348,59 +256,85 @@
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
             .puestos-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .nav-buttons {
-                width: 100%;
-                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-<!-- HEADER -->
-<header class="header">
-    <div class="logo">
-        Bolsa de <span>Empleo</span>
-    </div>
 
-    <div class="nav-buttons">
-        <!-- Si NO hay usuario logueado, mostrar botón de iniciar sesión -->
-        <div th:if="${session.usuario == null}">
-        <a href="/presentation/login" class="btn btn-outline">Iniciar Sesión</a>
-        <a href="/registro" class="btn btn-primary">Registrarse</a>
+<!-- ═══ NAVBAR OSCURA (Bootstrap) según el rol del usuario ══════════════
+     Reemplaza al header blanco del index porque acá el usuario ya está
+     logueado. Muestra links distintos para Empresa y para Oferente.
+     El correo y el botón Salir son iguales para ambos (segunda foto).
+-->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navPuestos" aria-controls="navPuestos"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/">BolsaEmpleo</a>
+
+        <div class="collapse navbar-collapse" id="navPuestos">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <!-- Links para EMPRESA -->
+                <th:block th:if="${session.usuario != null and session.usuario instanceof T(com.example.bolsadeempleo.logic.empresa.Empresa)}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/empresa/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/empresa/puestos">Mis puestos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/empresa/puestos/nuevo">Publicar puesto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/puestos">Ver puestos</a>
+                    </li>
+                </th:block>
+
+                <!-- Links para OFERENTE -->
+                <th:block th:if="${session.usuario != null and session.usuario instanceof T(com.example.bolsadeempleo.logic.oferente.Oferente)}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/oferente/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/oferente/habilidades">Mis habilidades</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/oferente/cv">Mi CV</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/puestos">Ver puestos</a>
+                    </li>
+                </th:block>
+
+            </ul>
+
+            <!-- Correo del usuario + botón Salir (igual para ambos roles) -->
+            <span class="text-light me-3 small"
+                  th:text="${session.usuario?.correo}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
         </div>
-
-        <!-- Si HAY usuario logueado, mostrar su info -->
-        <div th:if="${session.usuario != null}" class="user-info-header">
-            <span class="user-greeting" th:text="'Hola, ' + ${session.usuario.nombre} ?: ${session.usuario.correo}"></span>
-            <span class="user-role" th:if="${session.usuario instanceof T(com.example.bolsadeempleo.logic.administrador.Administrador)}">Administrador</span>
-            <span class="user-role" th:if="${session.usuario instanceof T(com.example.bolsadeempleo.logic.empresa.Empresa)}">Empresa</span>
-            <span class="user-role" th:if="${session.usuario instanceof T(com.example.bolsadeempleo.logic.oferente.Oferente)}">Oferente</span>
-            <a href="/presentation/login/logout" class="btn btn-outline">Cerrar Sesión</a>
-        </div>
     </div>
-</header>
+</nav>
 
-<!-- MAIN CONTENT -->
+<!-- MAIN CONTENT: idéntico al index, solo cambian el título, subtítulo
+     y la variable del th:each (todosPuestos en lugar de ultimosPuestos) -->
 <main class="main-content">
-    <h1 class="page-title">Encuentra tu próximo empleo</h1>
-    <p class="page-subtitle">Descubre las últimas oportunidades laborales publicadas por nuestras empresas</p>
 
-    <!-- TÍTULO DE SECCIÓN -->
-    <h2 style="margin-top: 2rem; color: #333;">📌 Puestos recién registrados</h2>
+    <h1 class="page-title">Puestos disponibles</h1>
+    <p class="page-subtitle">Todos los puestos activos, incluyendo privados</p>
+
+    <h2 style="margin-top: 2rem; color: #333;">📌 Todos los puestos</h2>
 
     <div class="puestos-grid">
-        <!-- Aquí se iterarán los puestos que vienen del controlador -->
-        <div class="puesto-card" th:each="puesto : ${ultimosPuestos}">
+
+        <div class="puesto-card" th:each="puesto : ${todosPuestos}">
             <div class="puesto-header">
                 <h3 class="puesto-titulo" th:text="${puesto.nombre}">Nombre del puesto</h3>
             </div>
@@ -426,11 +360,11 @@
             </div>
 
             <div>
-                    <span class="puesto-tipo"
-                          th:classappend="${puesto.esPublico} ? 'tipo-publico' : 'tipo-privado'"
-                          th:text="${puesto.esPublico} ? 'Público' : 'Privado'">
-                        Público
-                    </span>
+                <span class="puesto-tipo"
+                      th:classappend="${puesto.esPublico} ? 'tipo-publico' : 'tipo-privado'"
+                      th:text="${puesto.esPublico} ? 'Público' : 'Privado'">
+                    Público
+                </span>
             </div>
 
             <div class="tooltip-caracteristicas">
@@ -448,22 +382,15 @@
             </div>
         </div>
 
-        <!-- Mensaje si no hay puestos -->
-        <div th:if="${ultimosPuestos == null or ultimosPuestos.isEmpty()}" class="loading-placeholder">
-            <p>No hay puestos publicados aún. ¡Vuelve pronto!</p>
+        <div th:if="${todosPuestos == null or todosPuestos.isEmpty()}" class="loading-placeholder">
+            <p>No hay puestos publicados aún. ¡Volvé pronto!</p>
         </div>
+
     </div>
 
-    <div th:if="${session.usuario == null}" class="invite-msg">
-        <strong>¿Querés ver todos los puestos disponibles?</strong><br>
-        <a th:href="@{/presentation/login}">Iniciá sesión</a>
-        o
-        <a th:href="@{/registro}">registrate</a>
-        para acceder a todas las oportunidades laborales, incluyendo las privadas.
-    </div>
 </main>
 
-<!-- FOOTER -->
+<!-- FOOTER: idéntico al index -->
 <footer class="footer">
     <div class="footer-content">
         <p>&copy; 2026 Bolsa de Empleo. Todos los derechos reservados.</p>
@@ -474,5 +401,6 @@
         </div>
     </div>
 </footer>
+
 </body>
 </html>

@@ -6,6 +6,7 @@ import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.empresa.ServiceE;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferente.ServiceO;
+import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +28,26 @@ public class Controller {
     @Autowired
     private ServiceO serviceO;
 
+    @Autowired
+    private ServiceP serviceP;
+
     @GetMapping("/")
     public String index(Model model) {
+        model.addAttribute("ultimosPuestos", serviceP.getUltimosPuestosPublicos());
         return "presentation/index";
+    }
+
+    @GetMapping("/puestos")
+    public String todosPuestos(HttpSession session, Model model) {
+        Object usuario = session.getAttribute("usuario");
+
+        if (!(usuario instanceof Empresa) && !(usuario instanceof Oferente)) {
+            return "redirect:/presentation/login";
+        }
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("todosPuestos", serviceP.findAllActivos());
+        return "presentation/puestos/ViewTodosPuestos";
     }
 
     @GetMapping("/presentation/login")

@@ -10,12 +10,26 @@
 
 <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
     <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navOferente" aria-controls="navOferente"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <a class="navbar-brand" href="/oferente/dashboard">BolsaEmpleo</a>
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse" id="navOferente">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="/oferente/dashboard">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/oferente/habilidades">Mis habilidades</a></li>
-                <li class="nav-item"><a class="nav-link" href="/oferente/cv">Mi CV</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/oferente/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/oferente/habilidades">Mis habilidades</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/oferente/cv">Mi CV</a>
+                </li>
+                <li class="nav-item">
+                    <<a class="nav-link" th:href="@{/puestos}">Ver puestos</a>
+                </li>
             </ul>
             <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
             <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
