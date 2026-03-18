@@ -120,7 +120,23 @@ public class Controller {
             @RequestParam String descripcion,
             Model model) {
 
-        String error = serviceE.validarRegistro(correo);
+        String error = null;
+
+        if (nombre == null || nombre.isBlank() || !nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s]+$"))
+            error = "El nombre de la empresa solo puede contener letras.";
+
+        if (error == null && (localizacion == null || localizacion.isBlank() || !localizacion.matches(".*[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ].*")))
+            error = "La localización debe contener al menos una letra.";
+
+        if (error == null && (telefono == null || !telefono.matches("\\d+")))
+            error = "El teléfono debe contener solo números.";
+
+        if (error == null && (correo == null || !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")))
+            error = "El correo electrónico no es válido (debe tener formato usuario@dominio.com).";
+
+        if (error == null)
+            error = serviceE.validarRegistro(correo);
+
         if (error != null) {
             model.addAttribute("error", error);
             return "presentation/empresas/ViewRegistro";

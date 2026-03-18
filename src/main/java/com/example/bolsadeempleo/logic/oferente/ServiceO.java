@@ -50,7 +50,9 @@ public class ServiceO {
         return null;
     }
 
-
+    public Oferente findById(Integer id) {
+        return oferenteRepository.findById(id).orElse(null);
+    }
 
 
 

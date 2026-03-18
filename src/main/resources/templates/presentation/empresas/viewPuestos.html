@@ -98,7 +98,9 @@
         <tr th:each="p : ${puestos}">
             <td th:text="${p.id}"></td>
             <td th:text="${p.nombre}"></td>
-            <td th:text="${p.salario}"></td>
+            <td th:with="simbolo=${p.moneda == 'USD' ? '$' : (p.moneda == 'EUR' ? '€' : '₡')}"
+                th:text="${simbolo + ' ' + #numbers.formatDecimal(p.salario, 1, 'POINT', 2, 'COMMA')}">
+            </td>
             <td>
                 <span th:if="${p.activo}" class="badge bg-success">Sí</span>
                 <span th:if="${!p.activo}" class="badge bg-secondary">No</span>

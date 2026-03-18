@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Empresa - Candidatos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/empresa/dashboard">BolsaEmpleo</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/empresa/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/empresa/puestos">Mis puestos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/empresa/puestos/nuevo">Publicar puesto</a></li>
+            </ul>
+            <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-4">
+    <h4>Candidatos para el puesto</h4>
+    <p class="text-muted">Puesto: <strong th:text="${puesto.nombre}"></strong></p>
+
+    <div th:if="${#lists.isEmpty(candidatos)}" class="alert alert-info mt-3">
+        No se encontraron candidatos cuyas habilidades coincidan con los requisitos de este puesto.
+    </div>
+
+    <table th:if="${!#lists.isEmpty(candidatos)}" class="table table-bordered table-hover mt-3">
+        <thead class="table-dark">
+        <tr>
+            <th>Oferente</th>
+            <th>Requisitos cumplidos</th>
+            <th>% Coincidencia</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${candidatos}">
+            <td th:text="${c.oferente.nombre + ' ' + c.oferente.primerApellido}"></td>
+            <td th:text="${c.cumplidos + ' / ' + c.total}"></td>
+            <td th:text="${#numbers.formatDecimal(c.porcentaje, 1, 'POINT', 2, 'COMMA') + '%'}"></td>
+            <td>
+                <a th:href="@{/empresa/candidatos/{id}(id=${c.oferente.id}, puestoId=${puesto.id})}"
+                   class="btn btn-sm btn-primary">Ver detalle</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/empresa/puestos" class="btn btn-outline-secondary mt-2">Volver</a>
+</main>
+
+</body>
+</html>

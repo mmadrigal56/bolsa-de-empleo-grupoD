@@ -3,10 +3,12 @@ package com.example.bolsadeempleo.logic.puesto;
 import com.example.bolsadeempleo.data.*;
 import com.example.bolsadeempleo.logic.caracteristica.Caracteristica;
 import com.example.bolsadeempleo.logic.empresa.Empresa;
+import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.puestoCaracteristica.PuestoCaracteristica;
 import org.springframework.beans.factory.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +19,12 @@ public class ServiceP {
 
     @Autowired
     private PuestoCaracteristicaRepository puestoCaracteristicaRepository;
+
+    @Autowired
+    private OferenteRepository oferenteRepository;
+
+    @Autowired
+    private OferenteHabilidadRepository oferenteHabilidadRepository;
 
     public Iterable<Puesto> puestosFindAll () {
         return puestoRepository.findAll();
@@ -76,5 +84,30 @@ public class ServiceP {
 
     public void quitarRequisito(Integer pcId) {
         puestoCaracteristicaRepository.deleteById(pcId);
+    }
+
+    public List<CandidatoResultado> buscarCandidatos(Puesto puesto) {
+        List<PuestoCaracteristica> requisitos = puestoCaracteristicaRepository.findByPuesto(puesto);
+        List<CandidatoResultado> resultados = new ArrayList<>();
+
+        for (Oferente oferente : oferenteRepository.findAll()) {
+            if (!oferente.getAutorizado()) continue;
+
+            int cumplidos = 0;
+            for (PuestoCaracteristica req : requisitos) {
+                var habilidad = oferenteHabilidadRepository
+                        .findByOferenteAndCaracteristica(oferente, req.getCaracteristica());
+                if (habilidad.isPresent() && habilidad.get().getNivel() >= req.getNivel()) {
+                    cumplidos++;
+                }
+            }
+
+            if (cumplidos > 0) {
+                resultados.add(new CandidatoResultado(oferente, cumplidos, requisitos.size()));
+            }
+        }
+
+        resultados.sort((a, b) -> Double.compare(b.getPorcentaje(), a.getPorcentaje()));
+        return resultados;
     }
 }
