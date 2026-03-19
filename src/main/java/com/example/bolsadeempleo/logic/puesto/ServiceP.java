@@ -2,6 +2,7 @@ package com.example.bolsadeempleo.logic.puesto;
 
 import com.example.bolsadeempleo.data.*;
 import com.example.bolsadeempleo.logic.caracteristica.Caracteristica;
+import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
 import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.puestoCaracteristica.PuestoCaracteristica;
@@ -11,6 +12,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @org.springframework.stereotype.Service
 public class ServiceP {
@@ -25,6 +28,9 @@ public class ServiceP {
 
     @Autowired
     private OferenteHabilidadRepository oferenteHabilidadRepository;
+
+    @Autowired
+    private ServiceC serviceC;
 
     public Iterable<Puesto> puestosFindAll () {
         return puestoRepository.findAll();
@@ -60,6 +66,20 @@ public class ServiceP {
         p.setFechaRegistro(LocalDate.now());
         return puestoRepository.save(p);
     }
+
+
+    public List<Puesto> buscarPuestosPublicos(List<Integer> caracteristicaIds, String moneda) {
+        if (caracteristicaIds == null || caracteristicaIds.isEmpty())
+            return new ArrayList<>();
+
+        List<Integer> expandidos = serviceC.expandirConDescendientes(caracteristicaIds);
+        List<Puesto> resultados = puestoRepository.findDistinctByEsPublicoTrueAndActivoTrueAndRequisitosCaracteristicaIdIn(expandidos);
+
+        if (moneda == null || moneda.isBlank()) return resultados;
+
+        return resultados.stream().filter(p -> p.getMoneda().equals(moneda)).collect(toList());
+    }
+
 
     public void desactivarPuesto(Integer id) {
         puestoRepository.findById(id).ifPresent(p -> {

@@ -3,9 +3,7 @@ package com.example.bolsadeempleo.logic.caracteristica;
 import com.example.bolsadeempleo.data.*;
 import org.springframework.beans.factory.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @org.springframework.stereotype.Service
 public class ServiceC {
@@ -79,4 +77,51 @@ public class ServiceC {
                 .map(Caracteristica::getNombre)
                 .collect(java.util.stream.Collectors.joining(" / "));
     }
+
+    public List<Caracteristica> getArbolOrdenado() {
+        List<Caracteristica> lista = new ArrayList<>();
+        for (Caracteristica raiz : findRoots()) {
+            agregarEnOrden(lista, raiz);
+        }
+        return lista;
+    }
+
+    private void agregarEnOrden(List<Caracteristica> lista, Caracteristica c) {
+        lista.add(c);
+        for (Caracteristica hijo : findHijos(c)) {
+            agregarEnOrden(lista, hijo);
+        }
+    }
+
+    public Map<Integer, Integer> getNivelesArbol() {
+        Map<Integer, Integer> niveles = new LinkedHashMap<>();
+        for (Caracteristica raiz : findRoots()) {
+            calcularNiveles(niveles, raiz, 0);
+        }
+        return niveles;
+    }
+
+    private void calcularNiveles(Map<Integer, Integer> niveles, Caracteristica c, int nivel) {
+        niveles.put(c.getId(), nivel);
+        for (Caracteristica hijo : findHijos(c)) {
+            calcularNiveles(niveles, hijo, nivel + 1);
+        }
+    }
+
+    public List<Integer> expandirConDescendientes(List<Integer> ids) {
+        Set<Integer> todos = new LinkedHashSet<>();
+        for (Integer id : ids) {
+            Caracteristica c = findById(id);
+            if (c != null) agregarConDescendientes(todos, c);
+        }
+        return new ArrayList<>(todos);
+    }
+
+    private void agregarConDescendientes(Set<Integer> set, Caracteristica c) {
+        set.add(c.getId());
+        for (Caracteristica hijo : findHijos(c)) {
+            agregarConDescendientes(set, hijo);
+        }
+    }
+
 }

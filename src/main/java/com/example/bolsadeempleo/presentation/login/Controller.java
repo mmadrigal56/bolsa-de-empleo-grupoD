@@ -2,6 +2,7 @@ package com.example.bolsadeempleo.presentation.login;
 
 import com.example.bolsadeempleo.logic.administrador.ServiceA;
 import com.example.bolsadeempleo.logic.administrador.Administrador;
+import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
 import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.empresa.ServiceE;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @org.springframework.stereotype.Controller("usuario")
 @SessionAttributes("usuario")
@@ -30,6 +34,9 @@ public class Controller {
 
     @Autowired
     private ServiceP serviceP;
+
+    @Autowired
+    private ServiceC serviceC;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -242,6 +249,25 @@ public class Controller {
     @GetMapping("/registro-pendiente")
     public String registroPendiente() {
         return "presentation/login/ViewRegistroPendiente";
+    }
+
+    @GetMapping("/buscar-puestos")
+    public String formBuscarPuestos(Model model)
+    {
+        model.addAttribute("arbol", serviceC.getArbolOrdenado());
+        model.addAttribute("niveles", serviceC.getNivelesArbol());
+        return "presentation/puestos/ViewBuscarPuestos";
+    }
+
+    @PostMapping("/buscar-puestos")
+    public String buscarPuestos(@RequestParam(required = false) List<Integer> caracteristicaIds, @RequestParam(required = false) String moneda, Model model)
+    {
+        model.addAttribute("arbol", serviceC.getArbolOrdenado());
+        model.addAttribute("niveles", serviceC.getNivelesArbol());
+        model.addAttribute("resultados", serviceP.buscarPuestosPublicos(caracteristicaIds, moneda));
+        model.addAttribute("seleccionados", caracteristicaIds != null ? caracteristicaIds : new ArrayList<>());
+        model.addAttribute("monedaSeleccionada", moneda);
+        return "presentation/puestos/ViewBuscarPuestos";
     }
 
 }

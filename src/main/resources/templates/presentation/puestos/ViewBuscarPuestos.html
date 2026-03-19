@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bolsa de Empleo - Buscar puestos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-izq {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #0066cc; }
+        .logo span { color: #28a745; }
+        .link-buscar {
+            color: #0066cc; text-decoration: none;
+            font-weight: 500; font-size: 0.95rem;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 2px;
+        }
+        .link-buscar:hover { color: #0052a3; border-color: #0052a3; }
+
+        .nav-buttons { display: flex; gap: 1rem; align-items: center; }
+        .btn {
+            padding: 0.6rem 1.2rem; border-radius: 5px;
+            text-decoration: none; font-weight: 500;
+            cursor: pointer; border: none; font-size: 1rem;
+        }
+        .btn-outline { border: 1px solid #0066cc; color: #0066cc; background: transparent; }
+        .btn-outline:hover { background-color: #0066cc; color: white; }
+        .btn-primary { background-color: #0066cc; color: white; border: 1px solid #0066cc; }
+        .btn-primary:hover { background-color: #0052a3; }
+
+        .main-content {
+            flex: 1; max-width: 1100px;
+            margin: 2rem auto; padding: 0 2rem; width: 100%;
+        }
+        .page-title { font-size: 2rem; color: #333; margin-bottom: 1.5rem; }
+
+        /* Panel búsqueda */
+        .search-panel {
+            background: white; border-radius: 10px; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef; margin-bottom: 2rem;
+        }
+        .search-panel h3 { font-size: 1rem; color: #333; margin-bottom: 1rem; }
+
+        .arbol { column-count: 3; column-gap: 2rem; }
+        .arbol-item {
+            display: flex; align-items: center;
+            gap: 0.4rem; margin-bottom: 0.5rem; break-inside: avoid;
+        }
+        .arbol-item input[type="checkbox"] { cursor: pointer; }
+        .arbol-item label { cursor: pointer; font-size: 0.9rem; color: #444; }
+
+        .btn-buscar {
+            background-color: #0066cc; color: white;
+            padding: 0.5rem 1.5rem; border: none;
+            border-radius: 5px; cursor: pointer; font-size: 1rem;
+            margin-top: 1rem; margin-right: 0.5rem;
+        }
+        .btn-buscar:hover { background-color: #0052a3; }
+        .btn-limpiar {
+            background-color: transparent; color: #666;
+            padding: 0.5rem 1.5rem; border: 1px solid #ccc;
+            border-radius: 5px; font-size: 1rem;
+            margin-top: 1rem; text-decoration: none; display: inline-block;
+        }
+        .btn-limpiar:hover { background-color: #f0f0f0; }
+
+        /* Resultados */
+        .resultados-titulo { font-size: 1.2rem; color: #333; margin-bottom: 1rem; }
+        .puestos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .puesto-card {
+            background: white; border-radius: 10px; padding: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .puesto-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 16px rgba(0,0,0,0.13);
+        }
+        .puesto-titulo {
+            font-size: 1.05rem; color: #0066cc;
+            font-weight: 600; margin-bottom: 0.3rem;
+        }
+        .puesto-empresa {
+            color: #28a745; font-size: 0.85rem; margin-bottom: 0.6rem;
+        }
+        .puesto-empresa::before { content: "🏢 "; }
+        .puesto-salario {
+            background-color: #e8f4fd; color: #0066cc;
+            padding: 0.2rem 0.7rem; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600;
+            display: inline-block; margin-bottom: 0.8rem;
+        }
+        .puesto-salario::before { content: "💰 "; }
+
+        /* Requisitos en la card */
+        .requisitos-titulo {
+            font-size: 0.8rem; font-weight: 600;
+            color: #555; margin-bottom: 0.4rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .requisito-item {
+            display: flex; justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 0.3rem;
+            font-size: 0.82rem;
+        }
+        .requisito-nombre { color: #444; }
+        .requisito-nivel {
+            background-color: #0066cc; color: white;
+            padding: 0.1rem 0.5rem; border-radius: 10px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+
+        .no-resultados { color: #999; font-style: italic; padding: 1rem 0; }
+
+        .footer {
+            background-color: #333; color: white;
+            text-align: center; padding: 2rem; margin-top: 3rem;
+        }
+        .footer-content { max-width: 1200px; margin: 0 auto; }
+        .footer-links { margin-top: 1rem; }
+        .footer-links a { color: #28a745; text-decoration: none; margin: 0 1rem; }
+        .footer-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-izq">
+        <a href="/" class="logo">Bolsa de <span>Empleo</span></a>
+        <a href="/buscar-puestos" class="link-buscar">Buscar puestos</a>
+    </div>
+    <div class="nav-buttons">
+        <a href="/registro" class="btn btn-outline">Registrarse</a>
+        <a href="/presentation/login" class="btn btn-primary">Iniciar Sesión</a>
+    </div>
+</header>
+
+<main class="main-content">
+    <h1 class="page-title">Buscar puestos por características</h1>
+
+    <div class="search-panel">
+        <h3>Seleccione las características que desea buscar:</h3>
+        <form th:action="@{/buscar-puestos}" method="post">
+            <div class="arbol">
+                <div th:each="c : ${arbol}" class="arbol-item"
+                     th:style="'padding-left: ' + ${niveles[c.id] * 16} + 'px'">
+                    <input type="checkbox"
+                           name="caracteristicaIds"
+                           th:value="${c.id}"
+                           th:id="'c' + ${c.id}"
+                           th:checked="${seleccionados != null and seleccionados.contains(c.id)}"/>
+                    <label th:for="'c' + ${c.id}" th:text="${c.nombre}"></label>
+                </div>
+            </div>
+            <div style="margin-top: 1.2rem;">
+                <label style="font-size: 0.9rem; color: #444; font-weight: 500;">
+                    Filtrar por moneda:
+                </label>
+                <select name="moneda"
+                        style="margin-left: 0.5rem; padding: 0.3rem 0.8rem;
+                   border: 1px solid #ccc; border-radius: 5px;
+                   font-size: 0.9rem; color: #444;">
+                    <option value=""
+                            th:selected="${monedaSeleccionada == null or monedaSeleccionada == ''}">
+                        Todas las monedas
+                    </option>
+                    <option value="CRC"
+                            th:selected="${monedaSeleccionada == 'CRC'}">
+                        ₡ Colón (CRC)
+                    </option>
+                    <option value="USD"
+                            th:selected="${monedaSeleccionada == 'USD'}">
+                        $ Dólar (USD)
+                    </option>
+                    <option value="EUR"
+                            th:selected="${monedaSeleccionada == 'EUR'}">
+                        € Euro (EUR)
+                    </option>
+                </select>
+            </div>
+            <button type="submit" class="btn-buscar">Buscar</button>
+            <a href="/buscar-puestos" class="btn-limpiar">Limpiar</a>
+        </form>
+    </div>
+
+    <div th:if="${resultados != null}">
+        <h2 class="resultados-titulo"
+            th:text="'Resultados (' + ${#lists.size(resultados)} + ')'"></h2>
+
+        <p th:if="${#lists.isEmpty(resultados)}" class="no-resultados">
+            No se encontraron puestos que coincidan con las características seleccionadas.
+        </p>
+
+        <div th:if="${!#lists.isEmpty(resultados)}" class="puestos-grid">
+            <div class="puesto-card" th:each="p : ${resultados}">
+
+                <div class="puesto-titulo" th:text="${p.nombre}"></div>
+                <div class="puesto-empresa" th:text="${p.empresa.nombre}"></div>
+                <div>
+                    <span class="puesto-salario"
+                          th:with="s=${p.moneda == 'USD' ? '$' : (p.moneda == 'EUR' ? '€' : '₡')}"
+                          th:text="${s + ' ' + #numbers.formatDecimal(p.salario, 1, 'POINT', 2, 'COMMA')}">
+                    </span>
+                </div>
+
+                <!-- Características requeridas del puesto -->
+                <div th:if="${!p.requisitos.isEmpty()}" style="margin-top: 0.8rem;">
+                    <p class="requisitos-titulo">Características requeridas</p>
+                    <div th:each="req : ${p.requisitos}" class="requisito-item">
+                        <span class="requisito-nombre"
+                              th:text="${req.caracteristica.nombre}"></span>
+                        <span class="requisito-nivel"
+                              th:text="'Nivel ' + ${req.nivel}"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; 2026 Bolsa de Empleo. Todos los derechos reservados.</p>
+        <div class="footer-links">
+            <a href="#">Términos y condiciones</a>
+            <a href="#">Política de privacidad</a>
+            <a href="#">Contacto</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

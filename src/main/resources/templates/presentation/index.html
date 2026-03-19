@@ -363,6 +363,21 @@
                 justify-content: center;
             }
         }
+
+        .link-buscar {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-decoration: none;
+            padding: 0.2rem 0;
+            border: none;
+            background: none;
+            margin: 10px;
+        }
+
+        .link-buscar:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -370,14 +385,14 @@
 <header class="header">
     <div class="logo">
         Bolsa de <span>Empleo</span>
+        <a href="/buscar-puestos" class="link-buscar">Buscar puestos</a>
     </div>
 
     <div class="nav-buttons">
-        <!-- Si NO hay usuario logueado, mostrar botón de iniciar sesión -->
         <div th:if="${session.usuario == null}">
         <a href="/presentation/login" class="btn btn-outline">Iniciar Sesión</a>
         <a href="/registro" class="btn btn-primary">Registrarse</a>
-        </div>
+    </div>
 
         <!-- Si HAY usuario logueado, mostrar su info -->
         <div th:if="${session.usuario != null}" class="user-info-header">
