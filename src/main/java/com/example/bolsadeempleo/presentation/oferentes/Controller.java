@@ -6,6 +6,8 @@ import com.example.bolsadeempleo.logic.oferente.ServiceO;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.ServiceOH;
+import com.example.bolsadeempleo.logic.postulacion.ServicePO;
+import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +29,12 @@ public class Controller {
 
     @Autowired
     private ServiceC serviceC;
+
+    @Autowired
+    private ServiceP serviceP;
+
+    @Autowired
+    private ServicePO servicePO;
 
     private boolean esOferente(HttpSession session) {
         return session.getAttribute("usuario") instanceof Oferente;
@@ -144,6 +152,34 @@ public class Controller {
         String redirect = "/oferente/habilidades";
         if (actualId != null) redirect += "?actualId=" + actualId;
         return "redirect:" + redirect;
+    }
+
+    @GetMapping("/oferente/postulacion")
+    public String formPostulacion(HttpSession session, Model model) {
+        if (!esOferente(session)) return "redirect:/";
+        Oferente oferente = (Oferente) session.getAttribute("usuario");
+
+        List<com.example.bolsadeempleo.logic.puesto.Puesto> puestosDisponibles =
+                serviceP.findAllActivos().stream()
+                        .filter(p -> !servicePO.yaPostulado(oferente, p))
+                        .toList();
+
+        model.addAttribute("usuario", oferente);
+        model.addAttribute("puestos", puestosDisponibles);
+        return "presentation/oferentes/ViewPostulacion";
+    }
+
+    @PostMapping("/oferente/postulacion")
+    public String guardarPostulacion(@RequestParam Integer puestoId,
+                                     HttpSession session) {
+        if (!esOferente(session)) return "redirect:/";
+        Oferente oferente = (Oferente) session.getAttribute("usuario");
+
+        serviceP.findById(puestoId).ifPresent(puesto ->
+                servicePO.postular(oferente, puesto)
+        );
+
+        return "redirect:/oferente/dashboard";
     }
 }
 
