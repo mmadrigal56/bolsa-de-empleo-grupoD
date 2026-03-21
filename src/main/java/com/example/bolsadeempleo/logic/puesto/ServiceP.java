@@ -44,12 +44,17 @@ public class ServiceP {
         return puestoRepository.findById(id);
     }
 
+//    public List<Puesto> getUltimosPuestosPublicos() {
+//        return puestoRepository.findTop5ByEsPublicoTrueAndActivoTrueOrderByFechaRegistroDesc();
+//    }
+
     public List<Puesto> getUltimosPuestosPublicos() {
-        return puestoRepository.findTop5ByEsPublicoTrueAndActivoTrueOrderByFechaRegistroDesc();
+        return puestoRepository.findTop5ByEsPublicoTrueAndActivoTrueOrderByFechaRegistroDescIdDesc();
     }
 
+
     public List<Puesto> findAllActivos() {
-        return puestoRepository.findByActivoTrueOrderByFechaRegistroDesc();
+        return puestoRepository.findByActivoTrueOrderByFechaRegistroDescIdDesc();
     }
 
 

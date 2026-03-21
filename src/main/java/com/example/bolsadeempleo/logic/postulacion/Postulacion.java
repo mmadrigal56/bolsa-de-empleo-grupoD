@@ -34,11 +34,14 @@ public class Postulacion {
     @Column(name = "fecha_postulacion", nullable = false)
     private LocalDate fechaPostulacion;
 
+//    @NotNull
+//    @ColumnDefault("'PENDIENTE'")
+//    @Lob
+//    @Column(name = "estado", nullable = false)
+//    private String estado;
+
     @NotNull
     @ColumnDefault("'PENDIENTE'")
-    @Lob
-    @Column(name = "estado", nullable = false)
+    @Column(name = "estado", nullable = false, length = 20)
     private String estado;
-
-
 }
