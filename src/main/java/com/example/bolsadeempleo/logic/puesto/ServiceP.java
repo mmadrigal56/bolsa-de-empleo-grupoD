@@ -80,6 +80,18 @@ public class ServiceP {
         return resultados.stream().filter(p -> p.getMoneda().equals(moneda)).collect(toList());
     }
 
+    public List<Puesto> buscarPuestosParaOferente(List<Integer> caracteristicaIds, String moneda) {
+        if (caracteristicaIds == null || caracteristicaIds.isEmpty())
+            return new ArrayList<>();
+
+        List<Integer> expandidos = serviceC.expandirConDescendientes(caracteristicaIds);
+        List<Puesto> resultados = puestoRepository.findDistinctByActivoTrueAndRequisitosCaracteristicaIdIn(expandidos);
+
+        if (moneda == null || moneda.isBlank()) return resultados;
+
+        return resultados.stream().filter(p -> p.getMoneda().equals(moneda)).collect(toList());
+    }
+
 
     public void desactivarPuesto(Integer id) {
         puestoRepository.findById(id).ifPresent(p -> {

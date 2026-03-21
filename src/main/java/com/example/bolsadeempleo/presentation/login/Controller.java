@@ -7,6 +7,8 @@ import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.empresa.ServiceE;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferente.ServiceO;
+import com.example.bolsadeempleo.logic.postulacion.ServicePO;
+import com.example.bolsadeempleo.logic.puesto.Puesto;
 import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -19,6 +21,9 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 @org.springframework.stereotype.Controller("usuario")
 @SessionAttributes("usuario")
@@ -37,6 +42,9 @@ public class Controller {
 
     @Autowired
     private ServiceC serviceC;
+
+    @Autowired
+    private ServicePO servicePO;
 
     @GetMapping("/")
     public String index(Model model) {
@@ -260,13 +268,28 @@ public class Controller {
     }
 
     @PostMapping("/buscar-puestos")
-    public String buscarPuestos(@RequestParam(required = false) List<Integer> caracteristicaIds, @RequestParam(required = false) String moneda, Model model)
+    public String buscarPuestos(@RequestParam(required = false) List<Integer> caracteristicaIds, @RequestParam(required = false) String moneda, Model model, HttpSession session)
     {
+        Object usuario = session.getAttribute("usuario");
+        model.addAttribute("usuario", usuario);
+
         model.addAttribute("arbol", serviceC.getArbolOrdenado());
         model.addAttribute("niveles", serviceC.getNivelesArbol());
-        model.addAttribute("resultados", serviceP.buscarPuestosPublicos(caracteristicaIds, moneda));
         model.addAttribute("seleccionados", caracteristicaIds != null ? caracteristicaIds : new ArrayList<>());
         model.addAttribute("monedaSeleccionada", moneda);
+
+        if (usuario instanceof Oferente oferente) {
+            model.addAttribute("resultados", serviceP.buscarPuestosParaOferente(caracteristicaIds, moneda));
+
+            Set<Integer> postuladosIds = serviceP.findAllActivos().stream().filter(p -> servicePO.yaPostulado(oferente, p)).map(Puesto::getId).collect(toSet());
+            model.addAttribute("postulados", postuladosIds);
+        }
+
+        else
+        {
+            model.addAttribute("resultados", serviceP.buscarPuestosPublicos(caracteristicaIds, moneda));
+        }
+
         return "presentation/puestos/ViewBuscarPuestos";
     }
 

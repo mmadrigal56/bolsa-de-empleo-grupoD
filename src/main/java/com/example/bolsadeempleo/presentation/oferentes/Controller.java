@@ -7,6 +7,7 @@ import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.ServiceOH;
 import com.example.bolsadeempleo.logic.postulacion.ServicePO;
+import com.example.bolsadeempleo.logic.puesto.Puesto;
 import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -159,10 +160,7 @@ public class Controller {
         if (!esOferente(session)) return "redirect:/";
         Oferente oferente = (Oferente) session.getAttribute("usuario");
 
-        List<com.example.bolsadeempleo.logic.puesto.Puesto> puestosDisponibles =
-                serviceP.findAllActivos().stream()
-                        .filter(p -> !servicePO.yaPostulado(oferente, p))
-                        .toList();
+        List<Puesto> puestosDisponibles = serviceP.findAllActivos().stream().filter(p -> !servicePO.yaPostulado(oferente, p)).toList();
 
         model.addAttribute("usuario", oferente);
         model.addAttribute("puestos", puestosDisponibles);
@@ -170,14 +168,13 @@ public class Controller {
     }
 
     @PostMapping("/oferente/postulacion")
-    public String guardarPostulacion(@RequestParam Integer puestoId,
-                                     HttpSession session) {
+    public String guardarPostulacion(@RequestParam Integer puestoId, HttpSession session)
+    {
         if (!esOferente(session)) return "redirect:/";
+
         Oferente oferente = (Oferente) session.getAttribute("usuario");
 
-        serviceP.findById(puestoId).ifPresent(puesto ->
-                servicePO.postular(oferente, puesto)
-        );
+        serviceP.findById(puestoId).ifPresent(puesto -> servicePO.postular(oferente, puesto));
 
         return "redirect:/oferente/dashboard";
     }

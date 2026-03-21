@@ -18,6 +18,8 @@ public class ServicePO {
     }
 
     public void postular(Oferente oferente, Puesto puesto) {
+        if (yaPostulado(oferente, puesto)) return;
+
         Postulacion p = new Postulacion();
         p.setOferente(oferente);
         p.setPuesto(puesto);
@@ -27,8 +29,6 @@ public class ServicePO {
     }
 
     public boolean yaPostulado(Oferente oferente, Puesto puesto) {
-        return postulacionRepository
-                .findByOferenteAndPuesto(oferente, puesto)
-                .isPresent();
+        return postulacionRepository.findByOferenteAndPuesto(oferente, puesto).isPresent();
     }
 }

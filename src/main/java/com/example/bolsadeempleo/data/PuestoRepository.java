@@ -13,5 +13,6 @@ public interface PuestoRepository extends CrudRepository<Puesto, Integer> {
     List<Puesto> findTop5ByEsPublicoTrueAndActivoTrueOrderByFechaRegistroDesc();
     List<Puesto> findByActivoTrueOrderByFechaRegistroDesc();
     List<Puesto> findDistinctByEsPublicoTrueAndActivoTrueAndRequisitosCaracteristicaIdIn(List<Integer> ids);
+    List<Puesto> findDistinctByActivoTrueAndRequisitosCaracteristicaIdIn(List<Integer> ids);
 
 }
