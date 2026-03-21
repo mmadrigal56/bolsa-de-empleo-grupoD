@@ -1,12 +1,16 @@
 package com.example.bolsadeempleo.logic.postulacion;
 
+import ch.qos.logback.core.model.Model;
 import com.example.bolsadeempleo.data.*;
+import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.postulacion.Postulacion;
 import com.example.bolsadeempleo.logic.puesto.Puesto;
 import org.springframework.beans.factory.annotation.*;
 
+
 import java.time.LocalDate;
+import java.util.List;
 
 @org.springframework.stereotype.Service
 public class ServicePO {
@@ -31,4 +35,10 @@ public class ServicePO {
     public boolean yaPostulado(Oferente oferente, Puesto puesto) {
         return postulacionRepository.findByOferenteAndPuesto(oferente, puesto).isPresent();
     }
+
+    public List<Postulacion> findByPuesto(Puesto puesto)
+    {
+        return postulacionRepository.findByPuesto(puesto);
+    }
+
 }

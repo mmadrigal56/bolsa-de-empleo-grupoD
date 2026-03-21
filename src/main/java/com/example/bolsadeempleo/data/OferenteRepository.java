@@ -1,6 +1,7 @@
 package com.example.bolsadeempleo.data;
 
 import com.example.bolsadeempleo.logic.oferente.Oferente;
+import com.example.bolsadeempleo.logic.puesto.Puesto;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +13,5 @@ public interface OferenteRepository extends CrudRepository<Oferente, Integer> {
     Oferente findByCorreo(String correo);
     List<Oferente> findByAutorizadoFalse();
     Oferente findByIdentificacion(String identificacion);
+
 }

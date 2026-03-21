@@ -115,11 +115,14 @@
                     </button>
                 </form>
 
-                <!-- Botón Buscar candidatos: solo si el puesto está activo -->
                 <a th:if="${p.activo}"
                    th:href="@{/empresa/candidatos/buscar(puestoId=${p.id})}"
                    class="btn btn-sm btn-primary">
                     Buscar candidatos
+                </a>
+                <a th:href="@{/empresa/puestos/{id}/postulaciones(id=${p.id})}"
+                   class="btn btn-sm btn-outline-primary ms-1">
+                    Ver postulaciones
                 </a>
             </td>
         </tr>

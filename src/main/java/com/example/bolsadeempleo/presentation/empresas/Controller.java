@@ -7,6 +7,7 @@ import com.example.bolsadeempleo.logic.empresa.ServiceE;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferente.ServiceO;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.ServiceOH;
+import com.example.bolsadeempleo.logic.postulacion.ServicePO;
 import com.example.bolsadeempleo.logic.puesto.Puesto;
 import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import com.example.bolsadeempleo.logic.puestoCaracteristica.PuestoCaracteristica;
@@ -43,6 +44,9 @@ public class Controller {
 
     @Autowired
     private ServiceOH serviceOH;
+
+    @Autowired
+    private ServicePO servicePO;
 
     private boolean esEmpresa(HttpSession session) {
         return session.getAttribute("usuario") instanceof Empresa;
@@ -291,6 +295,26 @@ public class Controller {
         model.addAttribute("habilidades", serviceOH.findByOferente(oferente));
         return "presentation/empresas/ViewDetalleCandidato";
     }
+
+
+    //Prueba.
+
+    @GetMapping("/empresa/puestos/{id}/postulaciones")
+    public String verPostulaciones(@PathVariable Integer id, HttpSession session, Model model)
+    {
+        if (!esEmpresa(session)) return "redirect:/";
+        Empresa empresa = (Empresa) session.getAttribute("usuario");
+
+        Puesto puesto = serviceP.findById(id).filter(p -> p.getEmpresa().getId().equals(empresa.getId())).orElse(null);
+
+        if (puesto == null) return "redirect:/empresa/puestos";
+
+        model.addAttribute("usuario", empresa);
+        model.addAttribute("puesto", puesto);
+        model.addAttribute("postulaciones", servicePO.findByPuesto(puesto));
+        return "presentation/empresas/ViewPostulaciones";
+    }
+
 }
 
 

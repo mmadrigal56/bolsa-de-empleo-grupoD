@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface PostulacionRepository extends CrudRepository<Postulacion, Integer> {
     Optional<Postulacion> findByOferenteAndPuesto(Oferente oferente, Puesto puesto);
-    List<Postulacion> findByOferente(Oferente oferente);
+    List<Postulacion> findByPuesto(Puesto puesto);
 }
