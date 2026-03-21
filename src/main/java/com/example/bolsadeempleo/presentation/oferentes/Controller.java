@@ -6,6 +6,7 @@ import com.example.bolsadeempleo.logic.oferente.ServiceO;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.OferenteHabilidad;
 import com.example.bolsadeempleo.logic.oferenteHabilidad.ServiceOH;
+import com.example.bolsadeempleo.logic.postulacion.Postulacion;
 import com.example.bolsadeempleo.logic.postulacion.ServicePO;
 import com.example.bolsadeempleo.logic.puesto.Puesto;
 import com.example.bolsadeempleo.logic.puesto.ServiceP;
@@ -178,6 +179,19 @@ public class Controller {
 
         return "redirect:/oferente/dashboard";
     }
+
+     @GetMapping("/oferente/postulaciones")
+    public String verMisPostulaciones(HttpSession session, Model model)
+     {
+         if (!esOferente(session) || session.getAttribute("usuario") == null) return "redirect:/";
+
+         Oferente oferente = (Oferente) session.getAttribute("usuario");
+         List<Postulacion> postulaciones = servicePO.findByOferente(oferente);
+         model.addAttribute("oferente", oferente);
+         model.addAttribute("postulaciones", postulaciones);
+
+         return "presentation/oferentes/ViewMisPostulaciones";
+     }
 }
 
 

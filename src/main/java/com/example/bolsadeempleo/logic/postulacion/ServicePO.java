@@ -41,4 +41,9 @@ public class ServicePO {
         return postulacionRepository.findByPuesto(puesto);
     }
 
+    public List<Postulacion> findByOferente(Oferente oferente)
+    {
+        return postulacionRepository.findByOferente(oferente);
+    }
+
 }
