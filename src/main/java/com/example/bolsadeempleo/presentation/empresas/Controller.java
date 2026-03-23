@@ -251,10 +251,10 @@ public class Controller {
             model.addAttribute("requisitos", requisitos);
             model.addAttribute("rutasRequisitos", new HashMap<>());
             model.addAttribute("error", "Debe agregar al menos una característica antes de publicar el puesto.");
-            return "presentation/empresas/ViewRequisitos";
+            return "presentation/empresas/viewPuestos";
         }
 
-        return "redirect:/empresa/dashboard";
+        return "redirect:/empresa/puestos";
     }
 
     @GetMapping("/empresa/candidatos/buscar")
