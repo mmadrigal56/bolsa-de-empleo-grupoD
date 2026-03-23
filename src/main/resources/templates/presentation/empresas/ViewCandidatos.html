@@ -27,6 +27,17 @@
     <h4>Candidatos para el puesto</h4>
     <p class="text-muted">Puesto: <strong th:text="${puesto.nombre}"></strong></p>
 
+    <div class="mb-3">
+        <a th:href="@{/empresa/candidatos/buscar(puestoId=${puesto.id}, modo='parcial')}"
+           th:class="${modo == 'parcial'} ? 'btn btn-primary btn-sm me-2' : 'btn btn-outline-primary btn-sm me-2'">
+            Al menos un requisito
+        </a>
+        <a th:href="@{/empresa/candidatos/buscar(puestoId=${puesto.id}, modo='completo')}"
+           th:class="${modo == 'completo'} ? 'btn btn-primary btn-sm' : 'btn btn-outline-primary btn-sm'">
+            Todos los requisitos
+        </a>
+    </div>
+
     <div th:if="${#lists.isEmpty(candidatos)}" class="alert alert-info mt-3">
         No se encontraron candidatos cuyas habilidades coincidan con los requisitos de este puesto.
     </div>

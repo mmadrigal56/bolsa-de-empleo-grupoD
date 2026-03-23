@@ -258,8 +258,8 @@ public class Controller {
     }
 
     @GetMapping("/empresa/candidatos/buscar")
-    public String buscarCandidatos(@RequestParam Integer puestoId,
-                                   HttpSession session, Model model) {
+    public String buscarCandidatos(@RequestParam Integer puestoId, @RequestParam(required = false, defaultValue = "parcial") String modo, HttpSession session, Model model)
+    {
         if (!esEmpresa(session)) return "redirect:/";
         Empresa empresa = (Empresa) session.getAttribute("usuario");
 
@@ -268,9 +268,12 @@ public class Controller {
                 .orElse(null);
         if (puesto == null) return "redirect:/empresa/puestos";
 
+        boolean soloCompletos = "completo".equals(modo);
+
         model.addAttribute("usuario", empresa);
         model.addAttribute("puesto", puesto);
-        model.addAttribute("candidatos", serviceP.buscarCandidatos(puesto));
+        model.addAttribute("candidatos", serviceP.buscarCandidatos(puesto, soloCompletos));
+        model.addAttribute("modo", modo);
         return "presentation/empresas/ViewCandidatos";
     }
 

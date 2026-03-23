@@ -123,7 +123,8 @@ public class ServiceP {
         puestoCaracteristicaRepository.deleteById(pcId);
     }
 
-    public List<CandidatoResultado> buscarCandidatos(Puesto puesto) {
+
+    public List<CandidatoResultado> buscarCandidatos(Puesto puesto, boolean soloCompletos) {
         List<PuestoCaracteristica> requisitos = puestoCaracteristicaRepository.findByPuesto(puesto);
         List<CandidatoResultado> resultados = new ArrayList<>();
 
@@ -132,14 +133,17 @@ public class ServiceP {
 
             int cumplidos = 0;
             for (PuestoCaracteristica req : requisitos) {
-                var habilidad = oferenteHabilidadRepository
-                        .findByOferenteAndCaracteristica(oferente, req.getCaracteristica());
-                if (habilidad.isPresent() && habilidad.get().getNivel() >= req.getNivel()) {
+                var habilidad = oferenteHabilidadRepository.findByOferenteAndCaracteristica(oferente, req.getCaracteristica());
+                if (habilidad.isPresent() && habilidad.get().getNivel() >= req.getNivel())
+                {
                     cumplidos++;
                 }
             }
 
-            if (cumplidos > 0) {
+            boolean incluir = soloCompletos ? (cumplidos == requisitos.size() && cumplidos > 0) : cumplidos > 0;
+
+            if (incluir)
+            {
                 resultados.add(new CandidatoResultado(oferente, cumplidos, requisitos.size()));
             }
         }
