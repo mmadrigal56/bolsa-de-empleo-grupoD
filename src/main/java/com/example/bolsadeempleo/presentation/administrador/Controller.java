@@ -56,6 +56,13 @@ public class Controller {
 
     }
 
+    @GetMapping("/admin/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+        if (!esAdmin(session)) return "redirect:/";
+        model.addAttribute("usuario", session.getAttribute("usuario"));
+        return "presentation/administrador/View";
+    }
+
     @GetMapping("/presentation/administrador/caracteristicas")
     public String caracteristicas(Model model, HttpSession session) {
         Object usuario = session.getAttribute("usuario");
