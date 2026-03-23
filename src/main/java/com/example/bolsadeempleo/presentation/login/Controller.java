@@ -74,8 +74,7 @@ public class Controller {
     public String autenticar(@RequestParam("correo") String correo,
                              @RequestParam("clave") String clave,
                              HttpSession session,
-                             Model model)
-    {
+                             Model model) {
 
         Object usuario = serviceA.findUserByEmailAndPassword(correo, clave);
         System.out.println("Usuario encontrado: " + (usuario != null ? usuario.getClass().getSimpleName() : "NULL"));
@@ -85,11 +84,42 @@ public class Controller {
             return "/presentation/login/View";
         }
 
-        if ("PENDIENTE".equals(usuario)) {
-            model.addAttribute("error", "Tu cuenta aún no ha sido autorizada por un administrador.");
-            return "/presentation/login/View";
+        session.setAttribute("loginTemp", usuario);
+        model.addAttribute("estado", "verificando");
+        model.addAttribute("redirectUrl", "/presentation/login/verificar");
+
+        return "/presentation/login/ViewAutorizacion";
+    }
+
+    @GetMapping("/presentation/login/verificar")
+    public String verificarAutorizacion(HttpSession session, Model model) {
+
+        Object usuario = session.getAttribute("loginTemp");
+
+        if (usuario == null) {
+            return "redirect:/presentation/login";
+        }
+        // Verificar autorización según tipo de usuario
+        boolean autorizado = false;
+
+        if (usuario instanceof Administrador) {
+            // Los administradores siempre están autorizados
+            autorizado = true;
+        } else if (usuario instanceof Empresa empresa) {
+            autorizado = Boolean.TRUE.equals(empresa.getAutorizada());
+        } else if (usuario instanceof Oferente oferente) {
+            autorizado = Boolean.TRUE.equals(oferente.getAutorizado());
+        }
+        // Limpiar sesión temporal
+        session.removeAttribute("loginTemp");
+
+        if (!autorizado) {
+            // Mostrar vista de "Se requiere autorización de administrador"
+            model.addAttribute("estado", "denegado");
+            return "/presentation/login/ViewAutorizacion";
         }
 
+        // Usuario autorizado -> establecer sesión y redirigir
         session.setAttribute("usuario", usuario);
         model.addAttribute("usuario", usuario);
 
@@ -100,6 +130,7 @@ public class Controller {
         } else if (usuario instanceof Oferente) {
             return "redirect:/presentation/oferentes/show";
         }
+
         return "redirect:/";
     }
 
