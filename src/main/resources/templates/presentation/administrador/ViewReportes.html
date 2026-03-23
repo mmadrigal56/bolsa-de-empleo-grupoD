@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte - Puestos por Mes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .reporte-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+
+        .mes-titulo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0066cc;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .total-badge {
+            background-color: #0066cc;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .btn-imprimir {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-imprimir:hover {
+            background-color: #1e7e34;
+        }
+
+        .resumen-total {
+            background-color: #e8f4fd;
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            color: #0066cc;
+        }
+
+        /* ── Estilos de impresión ────────────────────────────── */
+        @media print {
+            nav,
+            .btn-imprimir,
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background-color: white;
+                font-size: 11pt;
+                color: black;
+            }
+
+            .reporte-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                border-radius: 0;
+                page-break-inside: auto;
+                margin-bottom: 1rem;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+
+            .mes-titulo {
+                color: black;
+                border-color: black;
+            }
+
+            .total-badge {
+                background-color: #333;
+            }
+
+            .resumen-total {
+                background-color: #f0f0f0;
+                border-color: #999;
+                color: black;
+            }
+
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 1.5rem;
+                border-bottom: 2px solid black;
+                padding-bottom: 0.8rem;
+            }
+
+            .print-header h1 {
+                font-size: 18pt;
+                margin-bottom: 0.2rem;
+            }
+
+            .print-header p {
+                font-size: 10pt;
+                color: #555;
+            }
+
+            a {
+                text-decoration: none;
+                color: black;
+            }
+
+            .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+
+            table {
+                font-size: 10pt;
+            }
+        }
+
+        .print-header {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin/dashboard">BolsaEmpleo</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/empresas/pendientes">Empresas pendientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/oferentes/pendientes">Oferentes pendientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/caracteristicas">Características</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/admin/reportes">Reportes</a></li>
+            </ul>
+            <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ── Contenido ──────────────────────────────────────────── -->
+<main class="container mt-4">
+
+    <div class="print-header">
+        <h1>Reporte de Puestos por Mes</h1>
+    </div>
+
+    <!-- Encabezado de pantalla -->
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        <h4 class="mb-0">Reporte de Puestos por Mes</h4>
+        <button class="btn-imprimir" onclick="window.print()">Imprimir / Guardar PDF</button>
+    </div>
+
+    <!-- ── Formulario de filtro ───────────────────────────── -->
+    <div class="border rounded p-3 bg-light mb-4 no-print">
+        <form th:action="@{/admin/reportes}" method="get" class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label class="form-label fw-semibold mb-1">Mes</label>
+                <select name="mes" class="form-select form-select-sm">
+                    <option value="1"  th:selected="${mesFiltro == 1}">Enero</option>
+                    <option value="2"  th:selected="${mesFiltro == 2}">Febrero</option>
+                    <option value="3"  th:selected="${mesFiltro == 3}">Marzo</option>
+                    <option value="4"  th:selected="${mesFiltro == 4}">Abril</option>
+                    <option value="5"  th:selected="${mesFiltro == 5}">Mayo</option>
+                    <option value="6"  th:selected="${mesFiltro == 6}">Junio</option>
+                    <option value="7"  th:selected="${mesFiltro == 7}">Julio</option>
+                    <option value="8"  th:selected="${mesFiltro == 8}">Agosto</option>
+                    <option value="9"  th:selected="${mesFiltro == 9}">Septiembre</option>
+                    <option value="10" th:selected="${mesFiltro == 10}">Octubre</option>
+                    <option value="11" th:selected="${mesFiltro == 11}">Noviembre</option>
+                    <option value="12" th:selected="${mesFiltro == 12}">Diciembre</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <label class="form-label fw-semibold mb-1">Año</label>
+                <input type="number" name="anio" class="form-control form-control-sm"
+                       th:value="${anioFiltro != null ? anioFiltro : 2026}"
+                       min="2026" max="2030"/>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+            </div>
+            <div class="col-auto">
+                <a href="/admin/reportes" class="btn btn-outline-secondary btn-sm">Ver todos</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sin datos -->
+    <div th:if="${puestosPorMes.isEmpty()}" class="alert alert-info">
+        No hay puestos registrados en el sistema aún.
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         CASO A: el usuario filtró por un mes específico
+         ══════════════════════════════════════════════════════ -->
+    <div th:if="${filtrados != null}">
+
+        <!-- Sin resultados para ese mes -->
+        <div th:if="${filtrados.isEmpty()}" class="alert alert-warning">
+            No hay puestos registrados en ese mes.
+        </div>
+
+        <!-- Tabla del mes filtrado -->
+        <div th:if="${!filtrados.isEmpty()}" class="reporte-card">
+
+            <div class="mes-titulo">
+                <span th:text="${nombreMesFiltro + ' ' + anioFiltro}"></span>
+                <span class="total-badge" th:text="${filtrados.size()} + ' puesto(s)'"></span>
+            </div>
+
+            <table class="table table-sm table-bordered table-hover mb-0">
+                <thead class="table-secondary">
+                <tr>
+                    <th style="width:4%">#</th>
+                    <th style="width:18%">Nombre del puesto</th>
+                    <th style="width:16%">Empresa</th>
+                    <th style="width:12%">Salario</th>
+                    <th style="width:8%">Moneda</th>
+                    <th style="width:10%">Fecha registro</th>
+                    <th style="width:8%">Tipo</th>
+                    <th style="width:8%">Estado</th>
+                    <th>Descripción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p, iter : ${filtrados}">
+                    <td th:text="${iter.count}"></td>
+                    <td th:text="${p.nombre}"></td>
+                    <td th:text="${p.empresa.nombre}"></td>
+                    <td th:text="${#numbers.formatDecimal(p.salario, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td th:text="${p.moneda}"></td>
+                    <td th:text="${#temporals.format(p.fechaRegistro, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <span th:text="${p.esPublico ? 'Público' : 'Privado'}"
+                              th:class="${p.esPublico} ? 'badge bg-success text-dark' : 'badge bg-warning text-dark'">
+                        </span>
+                    </td>
+                    <td>
+                        <span th:text="${p.activo ? 'Activo' : 'Inactivo'}"
+                              th:class="${p.activo} ? 'badge bg-primary text-dark' : 'badge bg-secondary text-dark'">
+                        </span>
+                    </td>
+                    <td class="small text-muted"
+                        style="max-width: 200px; word-wrap: break-word; white-space: normal;"
+                        th:text="${p.descripcion}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <!-- fin CASO A -->
+
+
+    <!-- ══════════════════════════════════════════════════════
+         CASO B: sin filtro, mostrar todos los meses
+         ══════════════════════════════════════════════════════ -->
+    <div th:if="${filtrados == null and !puestosPorMes.isEmpty()}">
+
+        <!-- Resumen general -->
+        <div class="resumen-total">
+            <strong>Total de meses con actividad:</strong>
+            <span th:text="${puestosPorMes.size()}"></span> mes(es)
+            &nbsp;|&nbsp;
+            <strong>Total de puestos registrados:</strong>
+            <span th:text="${totalPuestos}"></span>
+        </div>
+
+        <!-- Un bloque por cada mes -->
+        <div th:each="entrada : ${puestosPorMes}" class="reporte-card">
+
+            <div class="mes-titulo">
+                <span th:text="${entrada.key}"></span>
+                <span class="total-badge" th:text="${entrada.value.size()} + ' puesto(s)'"></span>
+            </div>
+
+            <table class="table table-sm table-bordered table-hover mb-0">
+                <thead class="table-secondary">
+                <tr>
+                    <th style="width:4%">#</th>
+                    <th style="width:18%">Nombre del puesto</th>
+                    <th style="width:16%">Empresa</th>
+                    <th style="width:12%">Salario</th>
+                    <th style="width:8%">Moneda</th>
+                    <th style="width:10%">Fecha registro</th>
+                    <th style="width:8%">Tipo</th>
+                    <th style="width:8%">Estado</th>
+                    <th>Descripción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p, iter : ${entrada.value}">
+                    <td th:text="${iter.count}"></td>
+                    <td th:text="${p.nombre}"></td>
+                    <td th:text="${p.empresa.nombre}"></td>
+                    <td th:text="${#numbers.formatDecimal(p.salario, 1, 'POINT', 2, 'COMMA')}"></td>
+                    <td th:text="${p.moneda}"></td>
+                    <td th:text="${#temporals.format(p.fechaRegistro, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <span th:text="${p.esPublico ? 'Público' : 'Privado'}"
+                              th:class="${p.esPublico} ? 'badge bg-success text-dark' : 'badge bg-warning text-dark'">
+                        </span>
+                                        </td>
+                                        <td>
+                        <span th:text="${p.activo ? 'Activo' : 'Inactivo'}"
+                              th:class="${p.activo} ? 'badge bg-primary text-dark' : 'badge bg-secondary text-dark'">
+                        </span>
+                    </td>
+                    <td class="small text-muted"
+                        style="max-width: 200px; word-wrap: break-word; white-space: normal;"
+                        th:text="${p.descripcion}">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>
