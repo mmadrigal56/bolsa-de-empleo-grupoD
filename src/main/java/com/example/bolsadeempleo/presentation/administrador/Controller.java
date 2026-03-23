@@ -6,6 +6,7 @@ import com.example.bolsadeempleo.logic.caracteristica.Caracteristica;
 import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
 import com.example.bolsadeempleo.logic.empresa.ServiceE;
 import com.example.bolsadeempleo.logic.oferente.ServiceO;
+import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,9 @@ public class Controller {
     @Autowired
     private ServiceE serviceE;
 
+    @Autowired
+    private ServiceP serviceP;
+
     private boolean esAdmin(HttpSession session) {
         Object u = session.getAttribute("usuario");
         return (u instanceof Administrador);
@@ -50,6 +54,13 @@ public class Controller {
         model.addAttribute("usuario", usuario);
         return "/presentation/administrador/View";
 
+    }
+
+    @GetMapping("/admin/dashboard")
+    public String dashboard(HttpSession session, Model model) {
+        if (!esAdmin(session)) return "redirect:/";
+        model.addAttribute("usuario", session.getAttribute("usuario"));
+        return "presentation/administrador/View";
     }
 
     @GetMapping("/presentation/administrador/caracteristicas")
@@ -152,6 +163,35 @@ public class Controller {
         if (!esAdmin(session)) return "redirect:/";
         serviceO.aprobarOferente(id);
         return "redirect:/admin/oferentes/pendientes";
+    }
+
+    @GetMapping("/admin/reportes")
+    public String reportes(@RequestParam(required = false) Integer mes,
+                           @RequestParam(required = false) Integer anio,
+                           HttpSession session, Model model) {
+
+        if (!esAdmin(session)) return "redirect:/";
+        model.addAttribute("usuario", session.getAttribute("usuario"));
+        model.addAttribute("puestosPorMes", serviceP.getPuestosPorMes());
+
+        if (mes != null && anio != null) {
+            model.addAttribute("filtrados", serviceP.getPuestosPorMesYAnio(mes, anio));
+            model.addAttribute("mesFiltro", mes);
+            model.addAttribute("anioFiltro", anio);
+
+            String nombreMes = java.time.Month.of(mes)
+                    .getDisplayName(java.time.format.TextStyle.FULL,
+                            new java.util.Locale("es", "CR"));
+            nombreMes = nombreMes.substring(0, 1).toUpperCase() + nombreMes.substring(1);
+            model.addAttribute("nombreMesFiltro", nombreMes);
+        }
+
+        int totalPuestos = serviceP.getPuestosPorMes().values().stream()
+                .mapToInt(List::size)
+                .sum();
+        model.addAttribute("totalPuestos", totalPuestos);
+
+        return "presentation/administrador/ViewReportes";
     }
 
 }

@@ -9,9 +9,9 @@ import com.example.bolsadeempleo.logic.puestoCaracteristica.PuestoCaracteristica
 import org.springframework.beans.factory.annotation.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -146,5 +146,35 @@ public class ServiceP {
 
         resultados.sort((a, b) -> Double.compare(b.getPorcentaje(), a.getPorcentaje()));
         return resultados;
+    }
+
+    public Map<String, List<Puesto>> getPuestosPorMes() {
+        List<Puesto> todos = new ArrayList<>();
+        puestoRepository.findAll().forEach(todos::add);
+
+        return todos.stream()
+                .sorted(Comparator.comparing(Puesto::getFechaRegistro))
+                .collect(Collectors.groupingBy(
+                        p -> {
+                            String mes = p.getFechaRegistro()
+                                    .getMonth()
+                                    .getDisplayName(TextStyle.FULL, new Locale("es", "CR"));
+                            mes = mes.substring(0, 1).toUpperCase() + mes.substring(1);
+                            return mes + " " + p.getFechaRegistro().getYear();
+                        },
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+    }
+
+    public List<Puesto> getPuestosPorMesYAnio(int mes, int anio) {
+        List<Puesto> todos = new ArrayList<>();
+        puestoRepository.findAll().forEach(todos::add);
+
+        return todos.stream()
+                .filter(p -> p.getFechaRegistro().getMonthValue() == mes
+                        && p.getFechaRegistro().getYear() == anio)
+                .sorted(Comparator.comparing(Puesto::getFechaRegistro))
+                .collect(Collectors.toList());
     }
 }

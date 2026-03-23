@@ -260,10 +260,11 @@ public class Controller {
     }
 
     @GetMapping("/buscar-puestos")
-    public String formBuscarPuestos(Model model)
+    public String formBuscarPuestos(Model model, HttpSession session)
     {
         model.addAttribute("arbol", serviceC.getArbolOrdenado());
         model.addAttribute("niveles", serviceC.getNivelesArbol());
+        model.addAttribute("usuario", session.getAttribute("usuario"));
         return "presentation/puestos/ViewBuscarPuestos";
     }
 

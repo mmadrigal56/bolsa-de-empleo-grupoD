@@ -19,27 +19,35 @@
         <div class="collapse navbar-collapse" id="navOferente">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/oferente/dashboard">Dashboard</a>
+                    <a class="nav-link active" href="/oferente/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="/oferente/habilidades">Mis habilidades</a>
+                    <a class="nav-link" href="/oferente/habilidades">Mis habilidades</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/oferente/cv">Mi CV</a>
                 </li>
                 <li class="nav-item">
-                    <<a class="nav-link" th:href="@{/puestos}">Ver puestos</a>
+                    <a class="nav-link" th:href="@{/puestos}">Ver puestos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/oferente/postulacion">Postularme</a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/buscar-puestos">Buscar puestos</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/oferente/postulaciones">Ver mis postulaciones</a>
+                </li>
+
             </ul>
             <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
             <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
         </div>
     </div>
 </nav>
-
 <main class="container mt-4">
     <h4>Mis habilidades</h4>
 

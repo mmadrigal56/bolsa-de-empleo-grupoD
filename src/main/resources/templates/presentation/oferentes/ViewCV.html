@@ -20,13 +20,13 @@
         <div class="collapse navbar-collapse" id="navOferente">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/oferente/dashboard">Dashboard</a>
+                    <a class="nav-link active" href="/oferente/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/oferente/habilidades">Mis habilidades</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="/oferente/cv">Mi CV</a>
+                    <a class="nav-link" href="/oferente/cv">Mi CV</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/puestos}">Ver puestos</a>
@@ -34,6 +34,15 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/oferente/postulacion">Postularme</a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/buscar-puestos">Buscar puestos</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/oferente/postulaciones">Ver mis postulaciones</a>
+                </li>
+
             </ul>
             <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
             <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
@@ -49,9 +58,28 @@
 
             <!-- Si ya tiene CV -->
             <div th:if="${usuario.rutaCurriculum != null and !#strings.isEmpty(usuario.rutaCurriculum)}">
+
+                <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
                 <p class="mb-3">Tu CV está registrado:</p>
-                <a th:href="${usuario.rutaCurriculum}"
-                   class="btn btn-success mb-4" target="_blank">Ver mi CV</a>
+
+                <div class="d-flex gap-2 mb-4">
+                    <a th:href="${usuario.rutaCurriculum}"
+                       class="btn btn-success" target="_blank">Ver mi CV</a>
+
+                    <form th:action="@{/oferente/cv/eliminar}" method="post">
+                        <button type="submit" class="btn btn-danger">Eliminar CV</button>
+                    </form>
+                </div>
+
+                <div th:if="${urlPreview != null}" class="mb-4">
+                    <p class="fw-semibold mb-2">Vista previa:</p>
+                    <iframe th:src="${urlPreview}"
+                            width="100%" height="500px"
+                            style="border: 1px solid #dee2e6; border-radius: 8px;"
+                            allowfullscreen>
+                    </iframe>
+                </div>
 
                 <h6 class="mt-3 mb-2">Actualizar link:</h6>
                 <form th:action="@{/oferente/cv}" method="post">
@@ -68,6 +96,7 @@
             <div th:if="${usuario.rutaCurriculum == null or #strings.isEmpty(usuario.rutaCurriculum)}">
                 <p class="text-muted mb-3">No tenés ningún CV registrado aún.</p>
                 <form th:action="@{/oferente/cv}" method="post">
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                     <div class="mb-3">
                         <label class="form-label">Link de tu CV:</label>
                         <input type="text" name="rutaCurriculum"

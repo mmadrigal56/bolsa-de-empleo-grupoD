@@ -81,18 +81,56 @@ public class Controller {
 
     @GetMapping("/oferente/cv")
     public String verCV(HttpSession session, Model model) {
-        Object usuario = session.getAttribute("usuario");
-        if (!(usuario instanceof Oferente)) {
+        Oferente oferente = (Oferente) session.getAttribute("usuario");
+        if (!(session.getAttribute("usuario") instanceof Oferente)) {
             return "redirect:/";
         }
-        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuario", oferente);
+
+        if (oferente.getRutaCurriculum() != null && !oferente.getRutaCurriculum().isBlank()) {
+            String urlPreview = oferente.getRutaCurriculum()
+                    .replace("/view", "/preview")
+                    .replace("/edit", "/preview");
+            model.addAttribute("urlPreview", urlPreview);
+        }
+
         return "presentation/oferentes/ViewCV";
     }
 
     @PostMapping("/oferente/cv")
-    public String guardarCV(@RequestParam String rutaCurriculum, HttpSession session) {
+    public String guardarCV(@RequestParam String rutaCurriculum,
+                            HttpSession session, Model model) {
         Oferente oferente = (Oferente) session.getAttribute("usuario");
+
+        // Validación del link
+        if (rutaCurriculum == null || rutaCurriculum.isBlank()) {
+            model.addAttribute("usuario", oferente);
+            model.addAttribute("error", "El link no puede estar vacío.");
+            return "presentation/oferentes/ViewCV";
+        }
+
+        boolean esDrive = rutaCurriculum.contains("drive.google.com") ||
+                rutaCurriculum.contains("docs.google.com");
+        boolean esOneDrive = rutaCurriculum.contains("onedrive.live.com") ||
+                rutaCurriculum.contains("1drv.ms") ||
+                rutaCurriculum.contains("sharepoint.com");
+
+        if (!esDrive && !esOneDrive) {
+            model.addAttribute("usuario", oferente);
+            model.addAttribute("error", "El link debe ser de Google Drive o OneDrive.");
+            return "presentation/oferentes/ViewCV";
+        }
+
         oferente.setRutaCurriculum(rutaCurriculum);
+        serviceO.actualizarOferente(oferente);
+        session.setAttribute("usuario", oferente);
+        return "redirect:/oferente/cv";
+    }
+
+    @PostMapping("/oferente/cv/eliminar")
+    public String eliminarCV(HttpSession session) {
+        Oferente oferente = (Oferente) session.getAttribute("usuario");
+        oferente.setRutaCurriculum(null);
         serviceO.actualizarOferente(oferente);
         session.setAttribute("usuario", oferente);
         return "redirect:/oferente/cv";
@@ -177,7 +215,7 @@ public class Controller {
 
         serviceP.findById(puestoId).ifPresent(puesto -> servicePO.postular(oferente, puesto));
 
-        return "redirect:/oferente/dashboard";
+        return "redirect:/oferente/postulaciones";
     }
 
      @GetMapping("/oferente/postulaciones")

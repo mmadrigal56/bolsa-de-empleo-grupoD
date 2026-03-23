@@ -43,9 +43,20 @@ public class ServiceC {
     {
         String nombreLimpio = nombre.trim();
 
+        // Vacío
         if (nombreLimpio.isEmpty()) {
             throw new IllegalArgumentException("El nombre de la característica no puede estar vacío.");
         }
+        if (nombreLimpio.length() < 2) {
+            throw new IllegalArgumentException("El nombre debe tener al menos 2 caracteres.");
+        }
+        if (!nombreLimpio.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s#&*()^]+$")) {
+            throw new IllegalArgumentException(
+                    "El nombre solo puede contener letras y los símbolos # & * ( ) ^");
+        }
+        if (!nombreLimpio.matches(".*[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ].*")) {
+            throw new IllegalArgumentException("El nombre debe contener al menos una letra.");
+    }
         Caracteristica padre = findById(padreId);
 
         boolean existe;
