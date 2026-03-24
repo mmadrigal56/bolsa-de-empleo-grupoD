@@ -245,8 +245,8 @@ public class Controller {
         if (error == null && (lugarResidencia == null || lugarResidencia.isBlank() || !lugarResidencia.matches(".*[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ].*")))
             error = "El lugar de residencia debe contener al menos una letra.";
 
-        if (error == null && (telefono == null || !telefono.matches("\\d+")))
-            error = "El teléfono debe contener solo números.";
+        if (error == null && (telefono == null || !telefono.matches("\\d{8}")))
+            error = "El teléfono debe contener exactamente 8 números.";
 
         if (error == null && (correo == null || !correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")))
             error = "El correo electrónico no es válido (debe tener formato usuario@dominio.com).";
