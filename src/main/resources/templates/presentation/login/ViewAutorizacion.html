@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <meta th:if="${estado == 'verificando'}" http-equiv="refresh" th:content="'1;url=' + ${redirectUrl}">
   <link rel="stylesheet" th:href="@{/css/presentation/login/ViewAutorizacion.css}">
   <title>Bolsa de Empleo - Verificando Autorización</title>
 </head>
@@ -15,7 +16,7 @@
   <p>Estamos comprobando tu estado de acceso.</p>
 </div>
 
-<div id="pantallaDenegado" class="card card-hidden" th:classappend="${estado == 'denegado'} ? '' : 'card-hidden'">
+<div id="pantallaDenegado" th:class="${estado == 'denegado'} ? 'card' : 'card card-hidden'">
   <div class="icono-alerta">🔒</div>
   <h2>Acceso no autorizado</h2>
   <p>

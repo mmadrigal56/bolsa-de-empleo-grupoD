@@ -2,19 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Oferente - Mis habilidades</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
           rel="stylesheet" crossorigin="anonymous">
+    <title>Oferente - Mis habilidades</title>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
     <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navOferente" aria-controls="navOferente"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
         <a class="navbar-brand" href="/oferente/dashboard">BolsaEmpleo</a>
         <div class="collapse navbar-collapse" id="navOferente">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -51,18 +46,18 @@
 <main class="container mt-4">
     <h4>Mis habilidades</h4>
 
-    <div class="row mt-3 g-4">
+    <div class="row g-4">
 
         <div class="col-md-4">
             <div class="border rounded p-3 bg-light h-100">
-                <p class="fw-bold mb-3">Habilidades registradas</p>
+                <p class="fw-bold">Habilidades registradas</p>
 
                 <p th:if="${#lists.isEmpty(habilidades)}" class="text-muted fst-italic">
                     Aún no tenés habilidades registradas.
                 </p>
 
-                <table th:if="${!#lists.isEmpty(habilidades)}" class="table table-sm table-bordered bg-white">
-                    <thead class="table-secondary">
+                <table th:if="${!#lists.isEmpty(habilidades)}" class="table table-bordered table-hover">
+                    <thead class="table table-bordered table-hover">
                     <tr>
                         <th>Característica</th>
                         <th>Nivel</th>
@@ -90,7 +85,7 @@
         <div class="col-md-4">
             <div class="border rounded p-3 bg-light h-100">
                 <p class="mb-1"><strong>Ruta:</strong></p>
-                <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                <div class="d-flex flex-wrap align-items-center gap-1">
                     <a th:href="@{/oferente/habilidades}" class="btn btn-sm btn-outline-secondary">Raíces</a>
                     <th:block th:each="nodo, iter : ${ruta}">
                         <span class="text-muted">/</span>
@@ -104,7 +99,7 @@
                     </th:block>
                 </div>
 
-                <p class="text-muted small mb-3">
+                <p class="text-muted small">
                     <th:block th:if="${actual == null}">Categorías: <strong>raíces</strong></th:block>
                     <th:block th:if="${actual != null}">Subcategorías de: <strong th:text="${actual.nombre}"></strong></th:block>
                 </p>
@@ -114,7 +109,7 @@
                 </p>
 
                 <div th:each="cat : ${categorias}"
-                     class="d-flex justify-content-between align-items-center border rounded bg-white p-2 mb-2">
+                     class="d-flex justify-content-between align-items-center border rounded bg-white p-2">
                     <span th:text="${cat.nombre}" class="fw-semibold"></span>
                     <a th:href="@{/oferente/habilidades(actualId=${cat.id})}"
                        class="btn btn-sm btn-outline-secondary">Entrar</a>
@@ -124,17 +119,17 @@
 
         <div class="col-md-4">
             <div class="border rounded p-3 bg-light h-100">
-                <p class="fw-bold mb-3">Agregar Habilidad</p>
+                <p class="fw-bold">Agregar Habilidad</p>
 
                 <div th:if="${actual == null}" class="text-muted small fst-italic">
                     Navegue el árbol hasta la característica que desea agregar.
                 </div>
 
                 <div th:if="${actual != null}">
-                    <p class="text-muted small mb-1">
+                    <p class="text-muted small">
                         Va a agregar: <strong th:text="${actual.nombre}"></strong>
                     </p>
-                    <div th:if="${!#lists.isEmpty(categorias)}" class="alert alert-info py-2 small mb-3">
+                    <div th:if="${!#lists.isEmpty(categorias)}" class="alert alert-info mt-3">
                         Esta característica tiene subcategorías. También puede entrar en ellas para ser más específico.
                     </div>
 
@@ -143,7 +138,7 @@
                         <input type="hidden" name="actualId" th:value="${actual.id}"/>
 
                         <div class="mb-3">
-                            <label class="form-label mb-1">Nivel (1-5)</label>
+                            <label class="form-label">Nivel (1-5)</label>
                             <input type="number" name="nivel" min="1" max="5"
                                    class="form-control form-control-sm" required/>
                         </div>
