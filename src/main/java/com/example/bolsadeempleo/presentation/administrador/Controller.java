@@ -6,6 +6,7 @@ import com.example.bolsadeempleo.logic.caracteristica.Caracteristica;
 import com.example.bolsadeempleo.logic.caracteristica.ServiceC;
 import com.example.bolsadeempleo.logic.empresa.ServiceE;
 import com.example.bolsadeempleo.logic.oferente.ServiceO;
+import com.example.bolsadeempleo.logic.puesto.Puesto;
 import com.example.bolsadeempleo.logic.puesto.ServiceP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Controller("administrador")
 public class Controller {
@@ -175,27 +177,29 @@ public class Controller {
 
         if (!esAdmin(session)) return "redirect:/";
         model.addAttribute("usuario", session.getAttribute("usuario"));
-        model.addAttribute("puestosPorMes", serviceP.getPuestosPorMes());
+
+        Map<String, List<Puesto>> puestosPorMes = serviceA.getPuestosSolicitadosPorMes();
+        model.addAttribute("puestosPorMes", puestosPorMes);
 
         if (mes != null && anio != null) {
-            model.addAttribute("filtrados", serviceP.getPuestosPorMesYAnio(mes, anio));
+            model.addAttribute("filtrados",
+                    serviceA.getPuestosSolicitadosPorMesYAnio(mes, anio));
             model.addAttribute("mesFiltro", mes);
             model.addAttribute("anioFiltro", anio);
+            model.addAttribute("conteoPostulaciones",
+                    serviceA.contarPostulacionesPorMes(mes, anio));
 
             String nombreMes = java.time.Month.of(mes)
                     .getDisplayName(java.time.format.TextStyle.FULL,
                             new java.util.Locale("es", "CR"));
             nombreMes = nombreMes.substring(0, 1).toUpperCase() + nombreMes.substring(1);
             model.addAttribute("nombreMesFiltro", nombreMes);
-
-            model.addAttribute("conteoPostulaciones",
-                    serviceA.contarPostulacionesPorMes(mes, anio));
         } else {
             model.addAttribute("conteoPorMes",
                     serviceA.contarPostulacionesPorTodosMeses());
         }
 
-        int totalPuestos = serviceP.getPuestosPorMes().values().stream()
+        int totalPuestos = puestosPorMes.values().stream()
                 .mapToInt(List::size)
                 .sum();
         model.addAttribute("totalPuestos", totalPuestos);

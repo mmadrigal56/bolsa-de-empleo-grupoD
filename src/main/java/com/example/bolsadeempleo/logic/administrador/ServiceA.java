@@ -4,6 +4,7 @@ import com.example.bolsadeempleo.data.*;
 import com.example.bolsadeempleo.logic.empresa.Empresa;
 import com.example.bolsadeempleo.logic.oferente.Oferente;
 import com.example.bolsadeempleo.logic.postulacion.Postulacion;
+import com.example.bolsadeempleo.logic.puesto.Puesto;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -64,7 +65,42 @@ public class ServiceA {
         administradorRepository.save(administrador);
     }
 
-    // Para CASO A
+    // CASO B: agrupados por mes de postulación
+    public Map<String, List<Puesto>> getPuestosSolicitadosPorMes() {
+        List<Postulacion> todas = new ArrayList<>();
+        postulacionRepository.findAll().forEach(todas::add);
+
+        return todas.stream()
+                .collect(Collectors.groupingBy(
+                        p -> {
+                            String clave = p.getFechaPostulacion()
+                                    .format(DateTimeFormatter.ofPattern("MMMM yyyy",
+                                            new Locale("es", "CR")));
+                            return clave.substring(0,1).toUpperCase() + clave.substring(1);
+                        },
+                        Collectors.mapping(
+                                Postulacion::getPuesto,
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        lista -> lista.stream().distinct().collect(Collectors.toList())
+                                )
+                        )
+                ));
+    }
+
+    // CASO A: mes/año específico
+    public List<Puesto> getPuestosSolicitadosPorMesYAnio(int mes, int anio) {
+        List<Postulacion> todas = new ArrayList<>();
+        postulacionRepository.findAll().forEach(todas::add);
+
+        return todas.stream()
+                .filter(p -> p.getFechaPostulacion().getMonthValue() == mes
+                        && p.getFechaPostulacion().getYear() == anio)
+                .map(Postulacion::getPuesto)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     public Map<Integer, Long> contarPostulacionesPorMes(int mes, int anio) {
         List<Postulacion> todas = new ArrayList<>();
         postulacionRepository.findAll().forEach(todas::add);
@@ -78,7 +114,6 @@ public class ServiceA {
                 ));
     }
 
-    // Para CASO B
     public Map<String, Map<Integer, Long>> contarPostulacionesPorTodosMeses() {
         List<Postulacion> todas = new ArrayList<>();
         postulacionRepository.findAll().forEach(todas::add);
@@ -89,7 +124,7 @@ public class ServiceA {
                             String clave = p.getFechaPostulacion()
                                     .format(DateTimeFormatter.ofPattern("MMMM yyyy",
                                             new Locale("es", "CR")));
-                            return clave.substring(0, 1).toUpperCase() + clave.substring(1);
+                            return clave.substring(0,1).toUpperCase() + clave.substring(1);
                         },
                         Collectors.groupingBy(
                                 p -> p.getPuesto().getId(),
