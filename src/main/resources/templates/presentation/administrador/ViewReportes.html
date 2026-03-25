@@ -30,7 +30,7 @@
 <!-- ── Contenido ──────────────────────────────────────────── -->
 <main class="container mt-4">
 
-    <div class="print-header">
+    <div class="print-header" style="display:none;">
         <h1>Reporte de Puestos por Mes</h1>
     </div>
 
@@ -108,7 +108,7 @@
                     <th style="width:8%">Moneda</th>
                     <th style="width:10%">Fecha registro</th>
                     <th style="width:8%">Tipo</th>
-                    <th style="width:8%">Estado</th>
+                    <th style="width:8%">Postulaciones</th>
                     <th>Descripción</th>
                 </tr>
                 </thead>
@@ -125,10 +125,8 @@
                               th:class="${p.esPublico} ? 'badge bg-success text-dark' : 'badge bg-warning text-dark'">
                         </span>
                     </td>
-                    <td>
-                        <span th:text="${p.activo ? 'Activo' : 'Inactivo'}"
-                              th:class="${p.activo} ? 'badge bg-primary text-dark' : 'badge bg-secondary text-dark'">
-                        </span>
+                    <td th:text="${conteoPostulaciones != null and conteoPostulaciones[p.id] != null
+                                    ? conteoPostulaciones[p.id] : 0}">
                     </td>
                     <td class="small text-muted"
                         style="max-width: 200px; word-wrap: break-word; white-space: normal;"
@@ -175,7 +173,7 @@
                     <th style="width:8%">Moneda</th>
                     <th style="width:10%">Fecha registro</th>
                     <th style="width:8%">Tipo</th>
-                    <th style="width:8%">Estado</th>
+                    <th style="width:8%">Postulaciones</th>
                     <th>Descripción</th>
                 </tr>
                 </thead>
@@ -191,11 +189,11 @@
                         <span th:text="${p.esPublico ? 'Público' : 'Privado'}"
                               th:class="${p.esPublico} ? 'badge bg-success text-dark' : 'badge bg-warning text-dark'">
                         </span>
-                                        </td>
-                                        <td>
-                        <span th:text="${p.activo ? 'Activo' : 'Inactivo'}"
-                              th:class="${p.activo} ? 'badge bg-primary text-dark' : 'badge bg-secondary text-dark'">
-                        </span>
+                    </td>
+                    <td th:text="${conteoPorMes != null
+                                   and conteoPorMes[entrada.key] != null
+                                   and conteoPorMes[entrada.key][p.id] != null
+                                   ? conteoPorMes[entrada.key][p.id] : 0}">
                     </td>
                     <td class="small text-muted"
                         style="max-width: 200px; word-wrap: break-word; white-space: normal;"

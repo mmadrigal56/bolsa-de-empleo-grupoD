@@ -21,7 +21,7 @@
 
         <!-- Si HAY usuario logueado, mostrar su info -->
         <div th:if="${session.usuario != null}" class="user-info-header">
-            <span class="user-greeting" th:text="'Hola, ' + ${session.usuario.nombre} ?: ${session.usuario.correo}"></span>
+            <span class="user-greeting" th:text="'Hola, ' + ${session.usuario.correo}"></span>
             <span class="user-role" th:if="${session.usuario instanceof T(com.example.bolsadeempleo.logic.administrador.Administrador)}">Administrador</span>
             <span class="user-role" th:if="${session.usuario instanceof T(com.example.bolsadeempleo.logic.empresa.Empresa)}">Empresa</span>
             <span class="user-role" th:if="${session.usuario instanceof T(com.example.bolsadeempleo.logic.oferente.Oferente)}">Oferente</span>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/presentation/empresas/ViewReporte.css}">
+    <title>Empresa - Reporte de Postulaciones</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navEmpresa" aria-controls="navEmpresa"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/empresa/dashboard">BolsaEmpleo</a>
+        <div class="collapse navbar-collapse" id="navEmpresa">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/empresa/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/empresa/puestos">Mis puestos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/empresa/puestos/nuevo">Publicar puesto</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/puestos}">Ver puestos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/empresa/reportes">Reporte</a>
+                </li>
+            </ul>
+            <span class="text-light me-3 small" th:text="${usuario?.correo}"></span>
+            <a href="/presentation/login/logout" class="btn btn-sm btn-secondary">Salir</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-4">
+
+    <!-- Título visible solo al imprimir -->
+    <div class="print-only" style="display:none; text-align:center; margin-bottom:20px;">
+        <h3>Bolsa de Empleo</h3>
+        <h5>Reporte de Postulaciones por Puesto</h5>
+    </div>
+
+    <!-- Encabezado de pantalla -->
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        <h4 class="mb-0">Reporte de Postulaciones por Puesto</h4>
+        <button th:if="${postulaciones != null}"
+                class="btn-imprimir" onclick="window.print()">
+            Imprimir / Guardar PDF
+        </button>
+    </div>
+
+    <!-- Formulario selector de puesto (no se imprime) -->
+    <div class="border rounded p-3 bg-light mb-4 no-print">
+        <form th:action="@{/empresa/reportes}" method="get" class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label class="form-label fw-semibold mb-1">Seleccionar puesto</label>
+                <select name="puestoId" class="form-select form-select-sm" required>
+                    <option value="" disabled
+                            th:selected="${puestoSeleccionado == null}">
+                        -- Seleccione un puesto --
+                    </option>
+                    <option th:each="p : ${puestos}"
+                            th:value="${p.id}"
+                            th:text="${p.nombre + (p.activo ? '' : ' (inactivo)')}"
+                            th:selected="${puestoSeleccionado != null and p.id == puestoSeleccionado.id}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary btn-sm">Ver reporte</button>
+            </div>
+            <div class="col-auto" th:if="${puestoSeleccionado != null}">
+                <a href="/empresa/reportes" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sin puestos -->
+    <div th:if="${#lists.isEmpty(puestos)}" class="alert alert-info no-print">
+        No tenés puestos publicados aún.
+        <a href="/empresa/puestos/nuevo" class="alert-link">Publicar uno ahora.</a>
+    </div>
+
+    <!-- ═══ REPORTE: se muestra al seleccionar un puesto ═══ -->
+    <div th:if="${postulaciones != null}">
+
+        <!-- Ficha del puesto -->
+        <div class="border rounded p-3 bg-white mb-3"
+             style="border-left: 4px solid #0066cc !important;">
+            <p class="mb-1 fw-bold fs-6" th:text="${puestoSeleccionado.nombre}"></p>
+            <p class="mb-1">
+                <span class="text-muted">Empresa:</span>
+                <strong th:text="${usuario.nombre}"></strong>
+            </p>
+            <p class="mb-1">
+                <span class="text-muted">Salario:</span>
+                <span th:with="s=${puestoSeleccionado.moneda == 'USD' ? '$' : (puestoSeleccionado.moneda == 'EUR' ? '€' : '₡')}"
+                      th:text="${s + ' ' + #numbers.formatDecimal(puestoSeleccionado.salario, 1, 'POINT', 2, 'COMMA') + ' (' + puestoSeleccionado.moneda + ')'}">
+                </span>
+            </p>
+            <p class="mb-0 fw-bold">
+                Total de postulantes:
+                <span th:text="${#lists.size(postulaciones)}"></span>
+            </p>
+        </div>
+
+        <!-- Sin postulantes -->
+        <div th:if="${#lists.isEmpty(postulaciones)}" class="alert alert-warning">
+            No hay postulaciones registradas para este puesto aún.
+        </div>
+
+        <!-- Tabla de postulantes -->
+        <table th:if="${!#lists.isEmpty(postulaciones)}"
+               class="table table-bordered table-hover table-sm">
+            <thead class="table-secondary">
+            <tr>
+                <th>#</th>
+                <th>Nombre completo</th>
+                <th>Identificación</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Residencia</th>
+                <th>Fecha postulación</th>
+                <th>Estado</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p, iter : ${postulaciones}">
+                <td th:text="${iter.count}"></td>
+                <td th:text="${p.oferente.nombre + ' ' + p.oferente.primerApellido}"></td>
+                <td th:text="${p.oferente.identificacion}"></td>
+                <td th:text="${p.oferente.correo}"></td>
+                <td th:text="${p.oferente.telefono}"></td>
+                <td th:text="${p.oferente.lugarResidencia}"></td>
+                <td th:text="${#temporals.format(p.fechaPostulacion, 'dd/MM/yyyy')}"></td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${p.estado == 'PENDIENTE'} ? 'bg-warning text-dark' : 'bg-success'"
+                          th:text="${p.estado}">
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- fin reporte -->
+
+    <a href="/empresa/dashboard" class="btn btn-outline-secondary mt-2 no-print">
+        ← Volver al Dashboard
+    </a>
+
+</main>
+
+</body>
+</html>
