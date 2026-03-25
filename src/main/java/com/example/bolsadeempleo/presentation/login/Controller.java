@@ -47,7 +47,13 @@ public class Controller {
     private ServicePO servicePO;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpSession session) {
+        Object usuario = session.getAttribute("usuario");
+
+        if (usuario instanceof Administrador) return "redirect:/admin/dashboard";
+        if (usuario instanceof Empresa) return "redirect:/empresa/dashboard";
+        if (usuario instanceof Oferente) return "redirect:/oferente/dashboard";
+
         model.addAttribute("ultimosPuestos", serviceP.getUltimosPuestosPublicos());
         return "presentation/index";
     }
