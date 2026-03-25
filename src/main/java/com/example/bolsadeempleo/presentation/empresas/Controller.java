@@ -318,6 +318,32 @@ public class Controller {
         return "presentation/empresas/ViewPostulaciones";
     }
 
+    @GetMapping("/empresa/reportes")
+    public String reportesEmpresa(
+            @RequestParam(required = false) Integer puestoId,
+            HttpSession session, Model model) {
+
+        if (!esEmpresa(session)) return "redirect:/";
+        Empresa empresa = (Empresa) session.getAttribute("usuario");
+
+        List<Puesto> puestos = serviceP.findByEmpresa(empresa);
+        model.addAttribute("usuario", empresa);
+        model.addAttribute("puestos", puestos);
+
+        if (puestoId != null) {
+            Puesto puestoSeleccionado = serviceP.findById(puestoId)
+                    .filter(p -> p.getEmpresa().getId().equals(empresa.getId()))
+                    .orElse(null);
+
+            if (puestoSeleccionado != null) {
+                model.addAttribute("puestoSeleccionado", puestoSeleccionado);
+                model.addAttribute("postulaciones", servicePO.findByPuesto(puestoSeleccionado));
+            }
+        }
+
+        return "presentation/empresas/ViewReporte";
+    }
+
 }
 
 
