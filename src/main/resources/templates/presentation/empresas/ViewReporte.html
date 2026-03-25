@@ -66,7 +66,7 @@
                 <select name="puestoId" class="form-select form-select-sm" required>
                     <option value="" disabled
                             th:selected="${puestoSeleccionado == null}">
-                        -- Seleccione un puesto --
+                         Seleccione un puesto
                     </option>
                     <option th:each="p : ${puestos}"
                             th:value="${p.id}"
@@ -156,7 +156,7 @@
     <!-- fin reporte -->
 
     <a href="/empresa/dashboard" class="btn btn-outline-secondary mt-2 no-print">
-        ← Volver al Dashboard
+        Volver al Dashboard
     </a>
 
 </main>
