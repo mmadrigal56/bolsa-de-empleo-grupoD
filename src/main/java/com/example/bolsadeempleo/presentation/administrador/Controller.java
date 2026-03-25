@@ -34,6 +34,9 @@ public class Controller {
     @Autowired
     private ServiceP serviceP;
 
+    @Autowired
+    private ServiceA serviceA;
+
     private boolean esAdmin(HttpSession session) {
         Object u = session.getAttribute("usuario");
         return (u instanceof Administrador);
@@ -184,6 +187,12 @@ public class Controller {
                             new java.util.Locale("es", "CR"));
             nombreMes = nombreMes.substring(0, 1).toUpperCase() + nombreMes.substring(1);
             model.addAttribute("nombreMesFiltro", nombreMes);
+
+            model.addAttribute("conteoPostulaciones",
+                    serviceA.contarPostulacionesPorMes(mes, anio));
+        } else {
+            model.addAttribute("conteoPorMes",
+                    serviceA.contarPostulacionesPorTodosMeses());
         }
 
         int totalPuestos = serviceP.getPuestosPorMes().values().stream()
