@@ -225,7 +225,6 @@ public class Controller {
         return "redirect:" + redirect;
     }
 
-   //End point para lo de carcaterísticas en puestos vacíos.
     @PostMapping("/empresa/puestos/{id}/finalizar")
     public String finalizarPuesto(@PathVariable Integer id, HttpSession session, Model model)
     {
@@ -298,9 +297,6 @@ public class Controller {
         model.addAttribute("habilidades", serviceOH.findByOferente(oferente));
         return "presentation/empresas/ViewDetalleCandidato";
     }
-
-
-    //Prueba.
 
     @GetMapping("/empresa/puestos/{id}/postulaciones")
     public String verPostulaciones(@PathVariable Integer id, HttpSession session, Model model)

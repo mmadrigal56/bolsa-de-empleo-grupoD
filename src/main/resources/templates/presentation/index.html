@@ -6,7 +6,7 @@
     <title>Bolsa de Empleo - Encuentra tu próximo trabajo</title>
 </head>
 <body>
-<!-- HEADER -->
+
 <header class="header">
     <div class="logo">
         Bolsa de <span>Empleo</span>
@@ -19,7 +19,7 @@
             <a href="/registro" class="btn btn-primary">Registrarse</a>
         </div>
 
-        <!-- Si HAY usuario logueado, mostrar su info -->
+
         <div th:if="${session.usuario != null}" class="user-info-header">
             <span class="user-greeting" th:text="'Hola, ' + ${session.usuario.correo}"></span>
             <span class="user-role" th:if="${session.usuario instanceof T(com.example.bolsadeempleo.logic.administrador.Administrador)}">Administrador</span>
@@ -30,16 +30,16 @@
     </div>
 </header>
 
-<!-- MAIN CONTENT -->
+
 <main class="main-content">
     <h1 class="page-title">Encuentra tu próximo empleo</h1>
     <p class="page-subtitle">Descubre las últimas oportunidades laborales publicadas por nuestras empresas</p>
 
-    <!-- TÍTULO DE SECCIÓN -->
+
     <h2 style="margin-top: 2rem; color: #333;">📌 Puestos recién registrados</h2>
 
     <div class="puestos-grid">
-        <!-- Aquí se iterarán los puestos que vienen del controlador -->
+
         <div class="puesto-card" th:each="puesto : ${ultimosPuestos}">
             <div class="puesto-header">
                 <h3 class="puesto-titulo" th:text="${puesto.nombre}">Nombre del puesto</h3>
@@ -88,7 +88,7 @@
             </div>
         </div>
 
-        <!-- Mensaje si no hay puestos -->
+
         <div th:if="${ultimosPuestos == null or ultimosPuestos.isEmpty()}" class="loading-placeholder">
             <p>No hay puestos publicados aún. ¡Vuelve pronto!</p>
         </div>
@@ -103,7 +103,7 @@
     </div>
 </main>
 
-<!-- FOOTER -->
+
 <footer class="footer">
     <div class="footer-content">
         <p>&copy; 2026 Bolsa de Empleo. Todos los derechos reservados.</p>

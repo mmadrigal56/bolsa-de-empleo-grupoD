@@ -102,7 +102,6 @@ public class Controller {
                             HttpSession session, Model model) {
         Oferente oferente = (Oferente) session.getAttribute("usuario");
 
-        // Validación del link
         if (rutaCurriculum == null || rutaCurriculum.isBlank()) {
             model.addAttribute("usuario", oferente);
             model.addAttribute("error", "El link no puede estar vacío.");
@@ -136,7 +135,7 @@ public class Controller {
         return "redirect:/oferente/cv";
     }
 
-//    Habilidades.
+
 
     @GetMapping("/oferente/habilidades")
     public String habilidades(@RequestParam(required = false) Integer actualId,

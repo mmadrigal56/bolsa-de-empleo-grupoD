@@ -50,7 +50,6 @@
     <div class="row">
         <div class="col-md-6">
 
-            <!-- Si ya tiene CV -->
             <div th:if="${usuario.rutaCurriculum != null and !#strings.isEmpty(usuario.rutaCurriculum)}">
 
                 <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
@@ -86,7 +85,6 @@
                 </form>
             </div>
 
-            <!-- Si no tiene CV -->
             <div th:if="${usuario.rutaCurriculum == null or #strings.isEmpty(usuario.rutaCurriculum)}">
                 <p class="text-muted">No tenés ningún CV registrado aún.</p>
                 <form th:action="@{/oferente/cv}" method="post">
