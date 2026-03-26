@@ -105,27 +105,23 @@ public class Controller {
         if (usuario == null) {
             return "redirect:/presentation/login";
         }
-        // Verificar autorización según tipo de usuario
+
         boolean autorizado = false;
 
         if (usuario instanceof Administrador) {
-            // Los administradores siempre están autorizados
             autorizado = true;
         } else if (usuario instanceof Empresa empresa) {
             autorizado = Boolean.TRUE.equals(empresa.getAutorizada());
         } else if (usuario instanceof Oferente oferente) {
             autorizado = Boolean.TRUE.equals(oferente.getAutorizado());
         }
-        // Limpiar sesión temporal
         session.removeAttribute("loginTemp");
 
         if (!autorizado) {
-            // Mostrar vista de "Se requiere autorización de administrador"
             model.addAttribute("estado", "denegado");
             return "/presentation/login/ViewAutorizacion";
         }
 
-        // Usuario autorizado -> establecer sesión y redirigir
         session.setAttribute("usuario", usuario);
         model.addAttribute("usuario", usuario);
 

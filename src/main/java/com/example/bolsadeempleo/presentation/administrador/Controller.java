@@ -20,7 +20,6 @@ import java.util.Map;
 
 @org.springframework.stereotype.Controller("administrador")
 public class Controller {
-    //El admin controla el flujo de las operaciones de características.
     @Autowired
     private ServiceA service;
 
@@ -137,7 +136,6 @@ public class Controller {
         }
     }
 
-    //    Testing para aprobaciones de empresas y de empleados.
     @GetMapping("/admin/empresas/pendientes")
     public String empresasPendientes(Model model, HttpSession session) {
         if (!esAdmin(session)) return "redirect:/";

@@ -43,7 +43,6 @@ public class ServiceC {
     {
         String nombreLimpio = nombre.trim();
 
-        // Vacío
         if (nombreLimpio.isEmpty()) {
             throw new IllegalArgumentException("El nombre de la característica no puede estar vacío.");
         }

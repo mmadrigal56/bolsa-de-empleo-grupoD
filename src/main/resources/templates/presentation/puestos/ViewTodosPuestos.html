@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <!-- Bootstrap solo para la navbar oscura, no toca el resto del CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
@@ -24,7 +23,6 @@
         <div class="collapse navbar-collapse" id="navPuestos">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                <!-- Links para EMPRESA -->
                 <th:block th:if="${session.usuario != null and session.usuario instanceof T(com.example.bolsadeempleo.logic.empresa.Empresa)}">
                     <li class="nav-item">
                         <a class="nav-link" href="/empresa/dashboard">Dashboard</a>
@@ -43,7 +41,6 @@
                     </li>
                 </th:block>
 
-                <!-- Links para OFERENTE -->
                 <th:block th:if="${session.usuario != null and session.usuario instanceof T(com.example.bolsadeempleo.logic.oferente.Oferente)}">
                     <li class="nav-item">
                         <a class="nav-link" href="/oferente/dashboard">Dashboard</a>
@@ -79,8 +76,7 @@
     </div>
 </nav>
 
-<!-- MAIN CONTENT: idéntico al index, solo cambian el título, subtítulo
-     y la variable del th:each (todosPuestos en lugar de ultimosPuestos) -->
+
 <main class="main-content">
 
     <h1 class="page-title">Puestos disponibles</h1>
@@ -146,7 +142,7 @@
 
 </main>
 
-<!-- FOOTER: idéntico al index -->
+
 <footer class="footer">
     <div class="footer-content">
         <p>&copy; 2026 Bolsa de Empleo. Todos los derechos reservados.</p>

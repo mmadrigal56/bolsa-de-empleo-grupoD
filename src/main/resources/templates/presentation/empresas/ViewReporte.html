@@ -43,13 +43,11 @@
 
 <main class="container mt-4">
 
-    <!-- Título visible solo al imprimir -->
     <div class="print-only" style="display:none; text-align:center; margin-bottom:20px;">
         <h3>Bolsa de Empleo</h3>
         <h5>Reporte de Postulaciones por Puesto</h5>
     </div>
 
-    <!-- Encabezado de pantalla -->
     <div class="d-flex justify-content-between align-items-center mb-3 no-print">
         <h4 class="mb-0">Reporte de Postulaciones por Puesto</h4>
         <button th:if="${postulaciones != null}"
@@ -58,7 +56,6 @@
         </button>
     </div>
 
-    <!-- Formulario selector de puesto (no se imprime) -->
     <div class="border rounded p-3 bg-light mb-4 no-print">
         <form th:action="@{/empresa/reportes}" method="get" class="row g-2 align-items-end">
             <div class="col-auto">
@@ -84,13 +81,12 @@
         </form>
     </div>
 
-    <!-- Sin puestos -->
     <div th:if="${#lists.isEmpty(puestos)}" class="alert alert-info no-print">
         No tenés puestos publicados aún.
         <a href="/empresa/puestos/nuevo" class="alert-link">Publicar uno ahora.</a>
     </div>
 
-    <!-- ═══ REPORTE: se muestra al seleccionar un puesto ═══ -->
+    <!-- ═══ REPORTE ═══ -->
     <div th:if="${postulaciones != null}">
 
         <!-- Ficha del puesto -->
@@ -113,12 +109,10 @@
             </p>
         </div>
 
-        <!-- Sin postulantes -->
         <div th:if="${#lists.isEmpty(postulaciones)}" class="alert alert-warning">
             No hay postulaciones registradas para este puesto aún.
         </div>
 
-        <!-- Tabla de postulantes -->
         <table th:if="${!#lists.isEmpty(postulaciones)}"
                class="table table-bordered table-hover table-sm">
             <thead class="table-secondary">
@@ -153,7 +147,6 @@
         </table>
 
     </div>
-    <!-- fin reporte -->
 
     <a href="/empresa/dashboard" class="btn btn-outline-secondary mt-2 no-print">
         ← Volver al Dashboard
