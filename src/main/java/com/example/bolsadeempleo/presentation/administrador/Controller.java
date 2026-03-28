@@ -127,9 +127,7 @@ public class Controller {
     {
         Caracteristica actual = serviceC.findById(actualId);
 
-        List<Caracteristica> categorias = (actual == null)
-                ? serviceC.findRoots()
-                : serviceC.findHijos(actual);
+        List<Caracteristica> categorias = (actual == null) ? serviceC.findRoots() : serviceC.findHijos(actual);
 
         List<Caracteristica> ruta = serviceC.buildRuta(actual);
         List<Caracteristica> opcionesPadre = categorias;

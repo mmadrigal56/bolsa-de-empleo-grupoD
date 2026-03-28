@@ -76,12 +76,10 @@ public class Controller {
         return "/presentation/login/View";
     }
 
+    //Cambios.
     @PostMapping("/presentation/login")
-    public String autenticar(@RequestParam("correo") String correo,
-                             @RequestParam("clave") String clave,
-                             HttpSession session,
-                             Model model) {
-
+    public String autenticar(@RequestParam("correo") String correo, @RequestParam("clave") String clave, HttpSession session, Model model)
+    {
         Object usuario = serviceA.findUserByEmailAndPassword(correo, clave);
         System.out.println("Usuario encontrado: " + (usuario != null ? usuario.getClass().getSimpleName() : "NULL"));
 
@@ -89,7 +87,6 @@ public class Controller {
             model.addAttribute("error", "Correo o contraseña incorrectos");
             return "/presentation/login/View";
         }
-
         session.setAttribute("loginTemp", usuario);
         model.addAttribute("estado", "verificando");
         model.addAttribute("redirectUrl", "/presentation/login/verificar");
@@ -295,6 +292,8 @@ public class Controller {
         return "presentation/login/ViewRegistroPendiente";
     }
 
+
+    //Cambios.
     @GetMapping("/buscar-puestos")
     public String formBuscarPuestos(Model model, HttpSession session)
     {
@@ -304,6 +303,8 @@ public class Controller {
         return "presentation/puestos/ViewBuscarPuestos";
     }
 
+
+    //Cambios.
     @PostMapping("/buscar-puestos")
     public String buscarPuestos(@RequestParam(required = false) List<Integer> caracteristicaIds, @RequestParam(required = false) String moneda, Model model, HttpSession session)
     {
@@ -321,13 +322,12 @@ public class Controller {
             Set<Integer> postuladosIds = serviceP.findAllActivos().stream().filter(p -> servicePO.yaPostulado(oferente, p)).map(Puesto::getId).collect(toSet());
             model.addAttribute("postulados", postuladosIds);
         }
-
         else
         {
             model.addAttribute("resultados", serviceP.buscarPuestosPublicos(caracteristicaIds, moneda));
         }
-
         return "presentation/puestos/ViewBuscarPuestos";
     }
+
 
 }

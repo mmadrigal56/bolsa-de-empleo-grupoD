@@ -114,31 +114,29 @@ public class Controller {
     }
 
 //    Puestos.
-
+    //Cambios.
     @GetMapping("/empresa/puestos/nuevo")
-    public String formNuevoPuesto(Model model, HttpSession session) {
+    public String formNuevoPuesto(Model model, HttpSession session)
+    {
         if (!esEmpresa(session)) return "redirect:/";
         model.addAttribute("usuario", session.getAttribute("usuario"));
         return "presentation/empresas/ViewNuevoPuesto";
     }
 
-    @PostMapping("/empresa/puestos/nuevo")
-    public String guardarNuevoPuesto(
-            @RequestParam String nombre,
-            @RequestParam String descripcion,
-            @RequestParam String salario,
-            @RequestParam String esPublico,
-            @RequestParam String moneda,
-            HttpSession session, Model model) {
 
+    //Cambios.
+    @PostMapping("/empresa/puestos/nuevo")
+    public String guardarNuevoPuesto(@RequestParam String nombre, @RequestParam String descripcion, @RequestParam String salario, @RequestParam String esPublico, @RequestParam String moneda, HttpSession session, Model model)
+    {
         if (!esEmpresa(session)) return "redirect:/";
         Empresa empresa = (Empresa) session.getAttribute("usuario");
+
 
         String error = null;
         Double salarioDouble = null;
 
         if (nombre == null || nombre.trim().isEmpty())
-            error = "El nombre del puesto no puede estar vacío.";
+            error = "El nombre del puesto NO puede ser vacío.";
 
         if (error == null && (descripcion == null || descripcion.trim().length() < 10))
             error = "La descripción debe tener al menos 10 caracteres.";
@@ -146,8 +144,9 @@ public class Controller {
         if (error == null) {
             try {
                 salarioDouble = Double.parseDouble(salario.trim());
-                if (salarioDouble <= 0) error = "El salario debe ser mayor a 0.";
-            } catch (NumberFormatException e) {
+                if (salarioDouble <= 0) error = "El salario debe de ser mayor a 0.";
+            } catch (NumberFormatException e)
+            {
                 error = "El salario debe ser un número válido (ej: 1500000).";
             }
         }
@@ -155,7 +154,8 @@ public class Controller {
         if (error == null && (esPublico == null || esPublico.isBlank()))
             error = "Debe seleccionar si el puesto es público o privado.";
 
-        if (error != null) {
+        if (error != null)
+        {
             model.addAttribute("usuario", empresa);
             model.addAttribute("error", error);
             model.addAttribute("tempNombre", nombre);
@@ -166,20 +166,19 @@ public class Controller {
             return "presentation/empresas/ViewNuevoPuesto";
         }
 
-        Puesto puesto = serviceP.crearPuesto(empresa, nombre, descripcion,
-                salarioDouble, "true".equals(esPublico), moneda);
+        Puesto puesto = serviceP.crearPuesto(empresa, nombre, descripcion, salarioDouble, "true".equals(esPublico), moneda);
         return "redirect:/empresa/puestos/" + puesto.getId() + "/requisitos";
     }
 
+    //Cambios.
     @GetMapping("/empresa/puestos/{id}/requisitos")
     public String requisitos(@PathVariable Integer id, @RequestParam(required = false) Integer actualId, HttpSession session, Model model)
     {
-        if (!esEmpresa(session)) return "redirect:/";
+        if  (!esEmpresa(session)) return "redirect:/";
         Empresa empresa = (Empresa) session.getAttribute("usuario");
 
         Puesto puesto = serviceP.findById(id).filter(p -> p.getEmpresa().getId().equals(empresa.getId())).orElse(null);
         if (puesto == null) return "redirect:/empresa/dashboard";
-
 
         Caracteristica actual = serviceC.findById(actualId);
         List<Caracteristica> categorias = (actual == null) ? serviceC.findRoots() : serviceC.findHijos(actual);
@@ -195,25 +194,25 @@ public class Controller {
         return "presentation/empresas/ViewRequisitos";
     }
 
+    //Cambios.
     @PostMapping("/empresa/puestos/{id}/requisitos/agregar")
     public String agregarRequisito(@PathVariable Integer id, @RequestParam Integer caracteristicaId, @RequestParam int nivel, @RequestParam(required = false) Integer actualId, HttpSession session)
     {
         if (!esEmpresa(session)) return "redirect:/";
         Empresa empresa = (Empresa) session.getAttribute("usuario");
 
-        serviceP.findById(id)
-                .filter(p -> p.getEmpresa().getId().equals(empresa.getId()))
-                .ifPresent(puesto -> {
-                    Caracteristica c = serviceC.findById(caracteristicaId);
-                    if (c != null && nivel >= 1 && nivel <= 5)
-                        serviceP.agregarOActualizarRequisito(puesto, c, nivel);
-                });
+        serviceP.findById(id).filter(p -> p.getEmpresa().getId().equals(empresa.getId())).ifPresent(puesto -> {
+            Caracteristica c = serviceC.findById(caracteristicaId);
+            if (c != null && nivel >= 1 && nivel <=5)
+                serviceP.agregarOActualizarRequisito(puesto, c, nivel);
+        });
 
         String redirect = "/empresa/puestos/" + id + "/requisitos";
         if (actualId != null) redirect += "?actualId=" + actualId;
         return "redirect:" + redirect;
     }
 
+    //Cambios.
     @PostMapping("/empresa/puestos/{id}/requisitos/quitar")
     public String quitarRequisito(@PathVariable Integer id, @RequestParam Integer pcId, @RequestParam(required = false) Integer actualId, HttpSession session)
     {
@@ -225,15 +224,14 @@ public class Controller {
         return "redirect:" + redirect;
     }
 
+    //Cambios.
     @PostMapping("/empresa/puestos/{id}/finalizar")
     public String finalizarPuesto(@PathVariable Integer id, HttpSession session, Model model)
     {
         if (!esEmpresa(session)) return "redirect:/";
         Empresa empresa = (Empresa) session.getAttribute("usuario");
 
-        Puesto puesto = serviceP.findById(id)
-                .filter(p -> p.getEmpresa().getId().equals(empresa.getId()))
-                .orElse(null);
+        Puesto puesto = serviceP.findById(id).filter(p -> p.getEmpresa().getId().equals(empresa.getId())).orElse(null);
         if (puesto == null) return "redirect:/empresa/dashboard";
 
         List<PuestoCaracteristica> requisitos = serviceP.findRequisitosByPuesto(puesto);
@@ -252,7 +250,6 @@ public class Controller {
             model.addAttribute("error", "Debe agregar al menos una característica antes de publicar el puesto.");
             return "presentation/empresas/viewPuestos";
         }
-
         return "redirect:/empresa/puestos";
     }
 
@@ -298,6 +295,8 @@ public class Controller {
         return "presentation/empresas/ViewDetalleCandidato";
     }
 
+
+    //Cambios.
     @GetMapping("/empresa/puestos/{id}/postulaciones")
     public String verPostulaciones(@PathVariable Integer id, HttpSession session, Model model)
     {
@@ -313,6 +312,7 @@ public class Controller {
         model.addAttribute("postulaciones", servicePO.findByPuesto(puesto));
         return "presentation/empresas/ViewPostulaciones";
     }
+
 
     @GetMapping("/empresa/reportes")
     public String reportesEmpresa(
