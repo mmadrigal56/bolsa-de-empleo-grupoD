@@ -42,6 +42,8 @@ public class Controller {
         return session.getAttribute("usuario") instanceof Oferente;
     }
 
+
+    //Cambios
     @GetMapping("/presentation/oferentes/show")
     public String show(Model model, HttpSession session)
     {
@@ -50,12 +52,14 @@ public class Controller {
             return "redirect:/";
         }
 
-        model.addAttribute("oferentes",serviceO.oferentesFindAll());
+        model.addAttribute("oferentes", serviceO.oferentesFindAll());
         model.addAttribute("usuario", usuario);
-        
+
         return "/presentation/oferentes/ViewDashboard";
     }
 
+
+    //Cambios
     @GetMapping("/presentation/oferentes/habilidades")
     public String habilidades(Model model, HttpSession session)
     {
@@ -63,7 +67,7 @@ public class Controller {
         if (usuario == null || !(usuario instanceof Oferente)) {
             return "redirect:/";
         }
-        model.addAttribute("oferenteHabilidad",serviceOH.oferenteHabilidadFindAll());
+        model.addAttribute("oferenteHabilidad", serviceOH.oferenteHabilidadFindAll());
         model.addAttribute("usuario", usuario);
 
         return "/presentation/oferentes/ViewParaHabilidadesDelOferente";
@@ -136,7 +140,7 @@ public class Controller {
     }
 
 
-
+    //Cambios
     @GetMapping("/oferente/habilidades")
     public String habilidades(@RequestParam(required = false) Integer actualId,
                               HttpSession session, Model model)
@@ -163,6 +167,7 @@ public class Controller {
     }
 
 
+    //Cambios
     @PostMapping("/oferente/habilidades/agregar")
     public String agregar(@RequestParam Integer caracteristicaId,
                           @RequestParam int nivel,
@@ -182,6 +187,8 @@ public class Controller {
         return "redirect:" + redirect;
     }
 
+
+    //Cambios
     @PostMapping("/oferente/habilidades/eliminar")
     public String eliminar(@RequestParam Integer habilidadId, @RequestParam(required = false) Integer actualId, HttpSession session)
     {
@@ -217,18 +224,22 @@ public class Controller {
         return "redirect:/oferente/postulaciones";
     }
 
-     @GetMapping("/oferente/postulaciones")
+
+    //Cambios
+
+    @GetMapping("/oferente/postulaciones")
     public String verMisPostulaciones(HttpSession session, Model model)
-     {
-         if (!esOferente(session) || session.getAttribute("usuario") == null) return "redirect:/";
+    {
+        if (!esOferente(session) || session.getAttribute("usuario") == null) return "redirect:/";
 
-         Oferente oferente = (Oferente) session.getAttribute("usuario");
-         List<Postulacion> postulaciones = servicePO.findByOferente(oferente);
-         model.addAttribute("oferente", oferente);
-         model.addAttribute("postulaciones", postulaciones);
+        Oferente oferente = (Oferente) session.getAttribute("usuario");
+        List<Postulacion> postulaciones = servicePO.findByOferente(oferente);
+        model.addAttribute("oferente", oferente);
+        model.addAttribute("postulaciones", postulaciones);
 
-         return "presentation/oferentes/ViewMisPostulaciones";
-     }
+        return "presentation/oferentes/ViewMisPostulaciones";
+    }
+
 }
 
 
