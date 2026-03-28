@@ -58,6 +58,7 @@ public class ServiceP {
     }
 
 
+    //Cambio
     public Puesto crearPuesto(Empresa empresa, String nombre, String descripcion, Double salario, Boolean esPublico, String moneda)
     {
         Puesto p = new Puesto();
@@ -73,7 +74,9 @@ public class ServiceP {
     }
 
 
-    public List<Puesto> buscarPuestosPublicos(List<Integer> caracteristicaIds, String moneda) {
+    //Cambio
+    public List<Puesto> buscarPuestosPublicos(List<Integer> caracteristicaIds, String moneda)
+    {
         if (caracteristicaIds == null || caracteristicaIds.isEmpty())
             return new ArrayList<>();
 
@@ -85,6 +88,8 @@ public class ServiceP {
         return resultados.stream().filter(p -> p.getMoneda().equals(moneda)).collect(toList());
     }
 
+
+    //Cambio
     public List<Puesto> buscarPuestosParaOferente(List<Integer> caracteristicaIds, String moneda) {
         if (caracteristicaIds == null || caracteristicaIds.isEmpty())
             return new ArrayList<>();
@@ -98,7 +103,9 @@ public class ServiceP {
     }
 
 
-    public void desactivarPuesto(Integer id) {
+     //Cambio
+    public void desactivarPuesto(Integer id)
+    {
         puestoRepository.findById(id).ifPresent(p -> {
             p.setActivo(false);
             puestoRepository.save(p);
@@ -109,7 +116,10 @@ public class ServiceP {
         return puestoCaracteristicaRepository.findByPuesto(puesto);
     }
 
-    public void agregarOActualizarRequisito(Puesto puesto, Caracteristica c, int nivel) {
+
+    //Cambio
+    public void agregarOActualizarRequisito(Puesto puesto, Caracteristica c, int nivel)
+    {
         Optional<PuestoCaracteristica> existente = puestoCaracteristicaRepository.findByPuestoAndCaracteristica(puesto, c);
 
         PuestoCaracteristica pc = existente.orElse(new PuestoCaracteristica());
@@ -118,6 +128,7 @@ public class ServiceP {
         pc.setNivel(nivel);
         puestoCaracteristicaRepository.save(pc);
     }
+
 
     public void quitarRequisito(Integer pcId) {
         puestoCaracteristicaRepository.deleteById(pcId);

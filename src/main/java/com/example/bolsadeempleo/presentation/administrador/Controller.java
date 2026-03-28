@@ -67,8 +67,11 @@ public class Controller {
         return "presentation/administrador/View";
     }
 
+
+    //Cambio.
     @GetMapping("/presentation/administrador/caracteristicas")
-    public String caracteristicas(Model model, HttpSession session) {
+    public String caracteristicas (Model model, HttpSession session)
+    {
         Object usuario = session.getAttribute("usuario");
         if (usuario == null || !(usuario instanceof Administrador)) {
             return "redirect:/";
@@ -79,6 +82,8 @@ public class Controller {
         return "/presentation/administrador/ViewCaracteristicasAdmin";
     }
 
+
+    //Cambio.
     @GetMapping("/admin/caracteristicas")
     public String caracteristicas(
             @RequestParam(required = false) Integer actualId,
@@ -90,15 +95,18 @@ public class Controller {
         return "presentation/administrador/ViewCaracteristicasAdmin";
     }
 
+
+    //Cambio.
     @PostMapping("/admin/caracteristicas")
     public String crearCaracteristica(
             @RequestParam String nombre,
             @RequestParam(required = false) Integer padreId,
             @RequestParam(required = false) Integer actualId,
             HttpSession session,
-            Model model) {
-
+            Model model)
+    {
         if (!esAdmin(session)) return "redirect:/";
+
 
         try {
             serviceC.crearCaracteristica(nombre, padreId);
@@ -112,7 +120,6 @@ public class Controller {
         }
         return "redirect:/admin/caracteristicas";
     }
-
 
     private void cargarModeloCaracteristicas(Integer actualId, Model model,
                                              HttpSession session, String error) {
