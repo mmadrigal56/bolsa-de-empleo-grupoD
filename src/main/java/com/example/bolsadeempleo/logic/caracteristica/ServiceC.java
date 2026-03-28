@@ -103,35 +103,52 @@ public class ServiceC {
         }
     }
 
-    public Map<Integer, Integer> getNivelesArbol() {
+
+
+
+    //CAMBIOS.
+    private void agregarConLosDescendientes (Set <Integer> set, Caracteristica caracteristica)
+    {
+        set.add(caracteristica.getId());
+        for (Caracteristica hijo : findHijos(caracteristica))
+        {
+            agregarConLosDescendientes(set, hijo);
+        }
+    }
+
+    public List<Integer> expandirConDescendientes(List<Integer> ids)
+    {
+        Set<Integer> todos = new LinkedHashSet<>();
+        for (Integer id : ids)
+        {
+            Caracteristica c = findById(id);
+            if (c != null)
+                agregarConLosDescendientes(todos, c);
+        }
+        return new ArrayList<>(todos);
+    }
+
+    private void calcularNiveles (Map<Integer, Integer> niveles, Caracteristica c, int nivel)
+    {
+        niveles.put(c.getId(), nivel);
+        for (Caracteristica hijo : findHijos(c))
+        {
+            calcularNiveles(niveles, hijo, nivel+1);
+        }
+    }
+
+
+    public Map<Integer, Integer> getNivelesArbol()
+    {
         Map<Integer, Integer> niveles = new LinkedHashMap<>();
-        for (Caracteristica raiz : findRoots()) {
+        for (Caracteristica raiz : findRoots())
+        {
             calcularNiveles(niveles, raiz, 0);
         }
         return niveles;
     }
 
-    private void calcularNiveles(Map<Integer, Integer> niveles, Caracteristica c, int nivel) {
-        niveles.put(c.getId(), nivel);
-        for (Caracteristica hijo : findHijos(c)) {
-            calcularNiveles(niveles, hijo, nivel + 1);
-        }
-    }
+    //HOLA HOLA.
 
-    public List<Integer> expandirConDescendientes(List<Integer> ids) {
-        Set<Integer> todos = new LinkedHashSet<>();
-        for (Integer id : ids) {
-            Caracteristica c = findById(id);
-            if (c != null) agregarConDescendientes(todos, c);
-        }
-        return new ArrayList<>(todos);
-    }
-
-    private void agregarConDescendientes(Set<Integer> set, Caracteristica c) {
-        set.add(c.getId());
-        for (Caracteristica hijo : findHijos(c)) {
-            agregarConDescendientes(set, hijo);
-        }
-    }
 
 }
