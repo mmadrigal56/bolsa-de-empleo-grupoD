@@ -121,8 +121,10 @@ public class Controller {
         return "redirect:/admin/caracteristicas";
     }
 
+    //Cambios.
     private void cargarModeloCaracteristicas(Integer actualId, Model model,
-                                             HttpSession session, String error) {
+                                             HttpSession session, String error)
+    {
         Caracteristica actual = serviceC.findById(actualId);
 
         List<Caracteristica> categorias = (actual == null)
@@ -143,22 +145,29 @@ public class Controller {
         }
     }
 
+
+    //Cambios.
     @GetMapping("/admin/empresas/pendientes")
-    public String empresasPendientes(Model model, HttpSession session) {
+    public String empresasPendientes(Model model, HttpSession session)
+    {
         if (!esAdmin(session)) return "redirect:/";
         model.addAttribute("usuario", session.getAttribute("usuario"));
         model.addAttribute("empresas", serviceE.findPendientes());
         return "presentation/administrador/ViewEmpresasPendientes";
     }
 
+
+    //Cambios.
     @GetMapping("/admin/oferentes/pendientes")
-    public String oferentesPendientes(Model model, HttpSession session) {
+    public String oferentesPendientes(Model model, HttpSession session)
+    {
         if (!esAdmin(session)) return "redirect:/";
-        model.addAttribute("usuario", session.getAttribute("usuario"));
+        model.addAttribute("usuario",session.getAttribute("usuario"));
         model.addAttribute("oferentes", serviceO.findPendientes());
         return "presentation/administrador/ViewOferentesPendientes";
     }
 
+    //Cambios.
     @PostMapping("/admin/empresas/pendientes/aprobar")
     public String aprobarEmpresa(@RequestParam Integer id, HttpSession session)
     {
@@ -167,6 +176,8 @@ public class Controller {
         return "redirect:/admin/empresas/pendientes";
     }
 
+
+    //Cambios.
     @PostMapping("/admin/oferentes/pendientes/aprobar")
     public String aprobarOferente(@RequestParam Integer id, HttpSession session)
     {
@@ -174,6 +185,7 @@ public class Controller {
         serviceO.aprobarOferente(id);
         return "redirect:/admin/oferentes/pendientes";
     }
+
 
     @GetMapping("/admin/reportes")
     public String reportes(@RequestParam(required = false) Integer mes,
