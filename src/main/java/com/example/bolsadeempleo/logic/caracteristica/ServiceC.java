@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.*;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.joining;
+
 @org.springframework.stereotype.Service
 public class ServiceC {
     @Autowired
@@ -22,89 +24,6 @@ public class ServiceC {
         return caracteristicaRepository.findByPadre(padre);
     }
 
-    public Caracteristica findById(Integer id) {
-        if (id == null) return null;
-        Optional<Caracteristica> opt = caracteristicaRepository.findById(id);
-        return opt.orElse(null);
-    }
-
-    public List<Caracteristica> buildRuta(Caracteristica actual) {
-        List<Caracteristica> ruta = new ArrayList<>();
-        Caracteristica cursor = actual;
-        while (cursor != null)
-        {
-            ruta.add(0, cursor);
-            cursor = cursor.getPadre();
-        }
-        return ruta;
-    }
-
-    public void crearCaracteristica(String nombre, Integer padreId)
-    {
-        String nombreLimpio = nombre.trim();
-
-        if (nombreLimpio.isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la característica no puede estar vacío.");
-        }
-        if (nombreLimpio.length() < 2) {
-            throw new IllegalArgumentException("El nombre debe tener al menos 2 caracteres.");
-        }
-        if (!nombreLimpio.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s#&*()^]+$")) {
-            throw new IllegalArgumentException(
-                    "El nombre solo puede contener letras y los símbolos # & * ( ) ^");
-        }
-        if (!nombreLimpio.matches(".*[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ].*")) {
-            throw new IllegalArgumentException("El nombre debe contener al menos una letra.");
-    }
-        Caracteristica padre = findById(padreId);
-
-        boolean existe;
-        if (padre == null) {
-            existe = caracteristicaRepository
-                    .findByNombreIgnoreCaseAndPadreIsNull(nombreLimpio)
-                    .isPresent();
-        } else {
-            existe = caracteristicaRepository
-                    .findByNombreIgnoreCaseAndPadre(nombreLimpio, padre)
-                    .isPresent();
-        }
-
-        if (existe) {
-            String nivel = (padre == null) ? "las raíces" : "\"" + padre.getNombre() + "\"";
-            throw new IllegalArgumentException(
-                    "Ya existe una característica llamada \"" + nombreLimpio + "\" en " + nivel + "."
-            );
-        }
-
-        Caracteristica c = new Caracteristica();
-        c.setNombre(nombreLimpio);
-        c.setPadre(padre);
-        caracteristicaRepository.save(c);
-    }
-
-    public String buildRutaString(Caracteristica c) {
-        return buildRuta(c).stream()
-                .map(Caracteristica::getNombre)
-                .collect(java.util.stream.Collectors.joining(" / "));
-    }
-
-    public List<Caracteristica> getArbolOrdenado() {
-        List<Caracteristica> lista = new ArrayList<>();
-        for (Caracteristica raiz : findRoots()) {
-            agregarEnOrden(lista, raiz);
-        }
-        return lista;
-    }
-
-    private void agregarEnOrden(List<Caracteristica> lista, Caracteristica c) {
-        lista.add(c);
-        for (Caracteristica hijo : findHijos(c)) {
-            agregarEnOrden(lista, hijo);
-        }
-    }
-
-
-
 
     //CAMBIOS.
     private void agregarConLosDescendientes (Set <Integer> set, Caracteristica caracteristica)
@@ -115,6 +34,27 @@ public class ServiceC {
             agregarConLosDescendientes(set, hijo);
         }
     }
+
+    public Caracteristica findById(Integer id)
+    {
+        if (id == null) return null;
+        Optional<Caracteristica> opt = caracteristicaRepository.findById(id);
+        return opt.orElse(null);
+    }
+
+    public List<Caracteristica> buildRuta(Caracteristica actual)
+    {
+        List<Caracteristica> ruta = new ArrayList<>();
+        Caracteristica cursor = actual;
+
+        while (cursor != null)
+        {
+            ruta.add(0, cursor);
+            cursor = cursor.getPadre();
+        }
+        return ruta;
+    }
+
 
     public List<Integer> expandirConDescendientes(List<Integer> ids)
     {
@@ -138,6 +78,72 @@ public class ServiceC {
     }
 
 
+    //HOLA HOLA.
+
+    private void agregarEnOrden(List <Caracteristica> lista, Caracteristica c)
+    {
+        lista.add(c);
+        for (Caracteristica hijo : findHijos (c))
+        {
+            agregarEnOrden(lista, hijo);
+        }
+    }
+
+    public List<Caracteristica> getArbolOrdenado()
+    {
+        List<Caracteristica> lista = new ArrayList<>();
+        for (Caracteristica raiz : findRoots())
+        {
+            agregarEnOrden(lista, raiz);
+        }
+        return lista;
+    }
+
+    public String buildRutaString(Caracteristica c)
+    {
+        return buildRuta(c).stream().map(Caracteristica::getNombre).collect(joining("/"));
+    }
+
+    public void crearCaracteristica(String nombre, Integer padreId)
+    {
+        String nombreLimpio = nombre.trim();
+
+        if (nombreLimpio.isEmpty())
+            throw new IllegalArgumentException("El nombre de la característica NO puede estar vacío.");
+
+        if (nombreLimpio.length() < 2)
+            throw new IllegalArgumentException("El nombre debe tener al menos 2 caracteres.");
+
+        if (!nombreLimpio.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s#&*()^]+$"))
+            throw new IllegalArgumentException("El nombre SOLO puede contener letras y los símbolos # & * ( ) ^");
+
+        if (!nombreLimpio.matches(".*[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ].*"))
+            throw new IllegalArgumentException("El nombre debe contener al menos UNA letra.");
+
+        Caracteristica padre = findById(padreId);
+        boolean existe;
+
+        if (padre == null)
+        {
+            existe = caracteristicaRepository.findByNombreIgnoreCaseAndPadreIsNull(nombreLimpio).isPresent();
+        }
+        else
+        {
+            existe = caracteristicaRepository.findByNombreIgnoreCaseAndPadre(nombreLimpio, padre).isPresent();
+        }
+
+        if (existe)
+        {
+            String nivel = (padre == null) ? "las raíces" : "\"" + padre.getNombre() + "\"";
+            throw new IllegalArgumentException("Ya existe una característica llamada \"" + nombreLimpio + "\" en " + nivel + ".");
+        }
+
+        Caracteristica c = new Caracteristica();
+        c.setNombre(nombreLimpio);
+        c.setPadre(padre);
+        caracteristicaRepository.save(c);
+    }
+
     public Map<Integer, Integer> getNivelesArbol()
     {
         Map<Integer, Integer> niveles = new LinkedHashMap<>();
@@ -147,8 +153,5 @@ public class ServiceC {
         }
         return niveles;
     }
-
-    //HOLA HOLA.
-
 
 }

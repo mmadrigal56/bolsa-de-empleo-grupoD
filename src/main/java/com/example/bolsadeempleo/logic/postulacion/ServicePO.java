@@ -36,10 +36,9 @@ public class ServicePO {
         return postulacionRepository.findByOferenteAndPuesto(oferente, puesto).isPresent();
     }
 
-    public List<Postulacion> findByPuesto(Puesto puesto)
-    {
-        return postulacionRepository.findByPuesto(puesto);
-    }
+
+    //Cambio.
+    public List<Postulacion> findByPuesto(Puesto puesto) { return postulacionRepository.findByPuesto(puesto);}
 
     public List<Postulacion> findByOferente(Oferente oferente)
     {

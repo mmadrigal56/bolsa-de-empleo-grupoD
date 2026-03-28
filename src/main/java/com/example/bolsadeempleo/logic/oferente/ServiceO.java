@@ -32,6 +32,8 @@ public class ServiceO {
         return oferenteRepository.findByAutorizadoFalse();
     }
 
+
+    //CAMBIO.
     public void aprobarOferente(int id)
     {
         oferenteRepository.findById(id).ifPresent(oferente -> {

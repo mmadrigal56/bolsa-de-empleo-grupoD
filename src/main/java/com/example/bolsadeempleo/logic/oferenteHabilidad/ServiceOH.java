@@ -17,9 +17,14 @@ public class ServiceOH {
         return oferenteHabilidadRepository.findAll();
     }
 
-    public List<OferenteHabilidad> findByOferente(Oferente oferente) {
+
+
+    //Cambio.
+    public List<OferenteHabilidad> findByOferente(Oferente oferente)
+    {
         return oferenteHabilidadRepository.findByOferente(oferente);
     }
+
 
     public void agregarOActualizar(Oferente oferente, Caracteristica caracteristica, int nivel) {
         Optional<OferenteHabilidad> existente = oferenteHabilidadRepository.findByOferenteAndCaracteristica(oferente, caracteristica);

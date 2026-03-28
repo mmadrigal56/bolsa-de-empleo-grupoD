@@ -26,13 +26,15 @@ public class ServiceE {
         return empresaRepository.findByAutorizadaFalse();
     }
 
+
     public void aprobarEmpresa(int id)
     {
-        empresaRepository.findById(id).ifPresent(empresa -> {
+        empresaRepository.findById(id).ifPresent (empresa -> {
             empresa.setAutorizada(true);
             empresaRepository.save(empresa);
         });
     }
+
 
     public String validarRegistro(String correo) {
         if (empresaRepository.findByCorreo(correo) != null) {
